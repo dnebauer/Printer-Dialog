@@ -45,7 +45,7 @@
 "*****************************************************************************
 
 " allow user to avoid loading this plugin and prevent loading twice
-if exists ("loaded_prtdialog")
+if exists('loaded_prtdialog')
     finish
 endif
 
@@ -72,112 +72,112 @@ nmap <silent> <unique> <script> <Plug>PRD_PrinterDialogNormal      :call <SID>PR
 
 
 if !exists('g:prd_prtDeviceList')
-    let g:prd_prtDeviceList = "standard"
+    let g:prd_prtDeviceList = 'standard'
 endif
 if !exists('g:prd_prtDeviceIdx')
     let g:prd_prtDeviceIdx  = 1
 endif
 
 if !exists('g:prd_fontList')
-    let g:prd_fontList      = "courier:h6,courier:h8,courier:h10,courier:h12,courier:h14"
+    let g:prd_fontList      = 'courier:h6,courier:h8,courier:h10,courier:h12,courier:h14'
 endif
 if !exists('g:prd_fontIdx')
     let g:prd_fontIdx       = 2
 endif
 
 if !exists('g:prd_paperList')
-    let g:prd_paperList     = "A3,A4,A5,B4,B5,legal,letter"
+    let g:prd_paperList     = 'A3,A4,A5,B4,B5,legal,letter'
 endif
 if !exists('g:prd_paperIdx')
     let g:prd_paperIdx      = 2
 endif
 
 if !exists('g:prd_portraitList')
-    let g:prd_portraitList  = "yes,no"
+    let g:prd_portraitList  = 'yes,no'
 endif
 if !exists('g:prd_portraitIdx')
     let g:prd_portraitIdx   = 1
 endif
 
 if !exists('g:prd_headerList')
-    let g:prd_headerList    = "0,1,2,3,4,5,6"
+    let g:prd_headerList    = '0,1,2,3,4,5,6'
 endif
 if !exists('g:prd_headerIdx')
     let g:prd_headerIdx     = 3
 endif
 
 if !exists('g:prd_lineNrList')
-    let g:prd_lineNrList    = "yes,no"
+    let g:prd_lineNrList    = 'yes,no'
 endif
 if !exists('g:prd_lineNrIdx')
     let g:prd_lineNrIdx     = 1
 endif
 
 if !exists('g:prd_syntaxList')
-    let g:prd_syntaxList    = "no,current,default,print_bw,zellner"
+    let g:prd_syntaxList    = 'no,current,default,print_bw,zellner'
 endif
 if !exists('g:prd_syntaxIdx')
     let g:prd_syntaxIdx     = 3
 endif
 
 if !exists('g:prd_wrapList')
-    let g:prd_wrapList      = "yes,no"
+    let g:prd_wrapList      = 'yes,no'
 endif
 if !exists('g:prd_wrapIdx')
     let g:prd_wrapIdx       = 1
 endif
 
 if !exists('g:prd_duplexList')
-    let g:prd_duplexList    = "off,long,short"
+    let g:prd_duplexList    = 'off,long,short'
 endif
 if !exists('g:prd_duplexIdx')
     let g:prd_duplexIdx     = 2
 endif
 
 if !exists('g:prd_collateList')
-    let g:prd_collateList   = "yes,no"
+    let g:prd_collateList   = 'yes,no'
 endif
 if !exists('g:prd_collateIdx')
     let g:prd_collateIdx    = 1
 endif
 
 if !exists('g:prd_jobSplitList')
-    let g:prd_jobSplitList  = "yes,no"
+    let g:prd_jobSplitList  = 'yes,no'
 endif
 if !exists('g:prd_jobSplitIdx')
     let g:prd_jobSplitIdx   = 2
 endif
 
 if !exists('g:prd_leftList')
-    let g:prd_leftList      = "5mm,10mm,15mm,20mm,25mm"
+    let g:prd_leftList      = '5mm,10mm,15mm,20mm,25mm'
 endif
 if !exists('g:prd_leftIdx')
     let g:prd_leftIdx       = 3
 endif
 
 if !exists('g:prd_rightList')
-    let g:prd_rightList     = "5mm,10mm,15mm,20mm,25mm"
+    let g:prd_rightList     = '5mm,10mm,15mm,20mm,25mm'
 endif
 if !exists('g:prd_rightIdx')
     let g:prd_rightIdx      = 3
 endif
 
 if !exists('g:prd_topList')
-    let g:prd_topList       = "5mm,10mm,15mm,20mm,25mm"
+    let g:prd_topList       = '5mm,10mm,15mm,20mm,25mm'
 endif
 if !exists('g:prd_topIdx')
     let g:prd_topIdx        = 2
 endif
 
 if !exists('g:prd_bottomList')
-    let g:prd_bottomList    = "5mm,10mm,15mm,20mm,25mm"
+    let g:prd_bottomList    = '5mm,10mm,15mm,20mm,25mm'
 endif
 if !exists('g:prd_bottomIdx')
     let g:prd_bottomIdx     = 2
 endif
 
 if !exists('g:prd_dialogList')
-    let g:prd_dialogList    = "yes,no"
+    let g:prd_dialogList    = 'yes,no'
 endif
 if !exists('g:prd_dialogIdx')
     let g:prd_dialogIdx     = 2
@@ -196,10 +196,10 @@ endif
 "*****************************************************************************
 
   " used to print/echo name of script
-let s:scriptName   = "PrtDialog"
+let s:scriptName   = 'PrtDialog'
 
   " delimiter for list-elements (g:prd_...List)
-let s:chrDelimiter = ","
+let s:chrDelimiter = ','
 
   " colorscheme loaded for printing?
 let s:flagColorschemeDone = 0
@@ -233,7 +233,7 @@ function <SID>PRD_StartPrinterDialog(whatToPrint)
         let s:endLine   = line("'>")
     else
         let s:startLine = 1
-        let s:endLine   = line("$")
+        let s:endLine   = line('$')
     endif
 
     let s:bufferUser = -1               " up to now no buffer for user-interface
@@ -269,14 +269,14 @@ endfunction
 "*****************************************************************************
 function s:OpenNewBuffer()
 
-    execute "enew"
+    execute 'enew'
 
     let s:bufferUser = winbufnr(0)
 
     " if new buffer is the same as source buffer for printing then
     " we have no buffer to be printed
     if (s:bufferUser == s:bufferSrc)
-        call s:prd_Exit()
+        call <SID>PRD_Exit()
         call s:Error(1)
         return -1
     endif
@@ -311,15 +311,15 @@ function s:UpdateDialog()
 
     " get name of buffer to be printed
     let strFilename = bufname(s:bufferSrc)
-    if (strFilename == "")
-        let strFilename = "[noname]"
+    if (strFilename ==# '')
+        let strFilename = '[noname]'
     endif
 
     " get range of buffer to be printed
     if  (s:whatToPrint == 0)
-        let strRange = "lines " . s:startLine . " - " . s:endLine
+        let strRange = 'lines ' . s:startLine . ' - ' . s:endLine
     else
-        let strRange = "whole file"
+        let strRange = 'whole file'
     endif
 
 
@@ -359,70 +359,70 @@ function s:UpdateDialog()
     let s:lnNr = s:lnNr + 1
     let s:txt  = s:txt .      ">File-Info:\n"
     let s:lnNr = s:lnNr + 1
-    let s:txt  = s:txt .      "   Name:      " . strFilename . "\n"
+    let s:txt  = s:txt .      '   Name:      ' . strFilename . "\n"
     let s:lnNr = s:lnNr + 1
-    let s:txt  = s:txt .      "   Range:     " . strRange    . "\n"
+    let s:txt  = s:txt .      '   Range:     ' . strRange    . "\n"
     let s:lnNr = s:lnNr + 1
     let s:txt  = s:txt .      "\n"
     let s:lnNr = s:lnNr + 1
-    let s:txt  = s:txt .      ">Printer:    <" . s:GetElementOutOfList(g:prd_prtDeviceList, g:prd_prtDeviceIdx) . ">\n"
+    let s:txt  = s:txt .      '>Printer:    <' . s:GetElementOutOfList(g:prd_prtDeviceList, g:prd_prtDeviceIdx) . '>\n'
     let s:lnNr = s:lnNr + 1
     let s:lnPrtDev = s:lnNr
     let s:txt  = s:txt .      "\n"
     let s:lnNr = s:lnNr + 1
     let s:txt  = s:txt .      ">Options:\n"
     let s:lnNr = s:lnNr + 1
-    let s:txt  = s:txt .      "   Font:     <" . s:GetElementOutOfList(g:prd_fontList, g:prd_fontIdx) . ">\n"
+    let s:txt  = s:txt .      '   Font:     <' . s:GetElementOutOfList(g:prd_fontList, g:prd_fontIdx) . ">\n"
     let s:lnNr = s:lnNr + 1
     let s:lnFont = s:lnNr
-    let s:txt  = s:txt .      "   Paper:    <" . s:GetElementOutOfList(g:prd_paperList, g:prd_paperIdx) . ">\n"
+    let s:txt  = s:txt .      '   Paper:    <' . s:GetElementOutOfList(g:prd_paperList, g:prd_paperIdx) . ">\n"
     let s:lnNr = s:lnNr + 1
     let s:lnPaper = s:lnNr
-    let s:txt  = s:txt .      "   Portrait: <" . s:GetElementOutOfList(g:prd_portraitList, g:prd_portraitIdx) . ">\n"
+    let s:txt  = s:txt .      '   Portrait: <' . s:GetElementOutOfList(g:prd_portraitList, g:prd_portraitIdx) . ">\n"
     let s:lnNr = s:lnNr + 1
     let s:lnPortrait = s:lnNr
     let s:txt  = s:txt .      "\n"
     let s:lnNr = s:lnNr + 1
-    let s:txt  = s:txt .      "   Header:   <" . s:GetElementOutOfList(g:prd_headerList, g:prd_headerIdx) . ">\n"
+    let s:txt  = s:txt .      '   Header:   <' . s:GetElementOutOfList(g:prd_headerList, g:prd_headerIdx) . ">\n"
     let s:lnNr = s:lnNr + 1
     let s:lnHeader = s:lnNr
-    let s:txt  = s:txt .      "   Line-Nr:  <" . s:GetElementOutOfList(g:prd_lineNrList, g:prd_lineNrIdx) . ">\n"
+    let s:txt  = s:txt .      '   Line-Nr:  <' . s:GetElementOutOfList(g:prd_lineNrList, g:prd_lineNrIdx) . ">\n"
     let s:lnNr = s:lnNr + 1
     let s:lnLineNr = s:lnNr
-    let s:txt  = s:txt .      "   Syntax:   <" . s:GetElementOutOfList(g:prd_syntaxList, g:prd_syntaxIdx) . ">\n"
+    let s:txt  = s:txt .      '   Syntax:   <' . s:GetElementOutOfList(g:prd_syntaxList, g:prd_syntaxIdx) . ">\n"
     let s:lnNr = s:lnNr + 1
     let s:lnSyntax = s:lnNr
     let s:txt  = s:txt .      "\n"
     let s:lnNr = s:lnNr + 1
-    let s:txt  = s:txt .      "   Wrap:     <" . s:GetElementOutOfList(g:prd_wrapList, g:prd_wrapIdx) . ">\n"
+    let s:txt  = s:txt .      '   Wrap:     <' . s:GetElementOutOfList(g:prd_wrapList, g:prd_wrapIdx) . ">\n"
     let s:lnNr = s:lnNr + 1
     let s:lnWrap = s:lnNr
-    let s:txt  = s:txt .      "   Duplex:   <" . s:GetElementOutOfList(g:prd_duplexList, g:prd_duplexIdx) . ">\n"
+    let s:txt  = s:txt .      '   Duplex:   <' . s:GetElementOutOfList(g:prd_duplexList, g:prd_duplexIdx) . ">\n"
     let s:lnNr = s:lnNr + 1
     let s:lnDuplex = s:lnNr
-    let s:txt  = s:txt .      "   Collate:  <" . s:GetElementOutOfList(g:prd_collateList, g:prd_collateIdx) . ">\n"
+    let s:txt  = s:txt .      '   Collate:  <' . s:GetElementOutOfList(g:prd_collateList, g:prd_collateIdx) . ">\n"
     let s:lnNr = s:lnNr + 1
     let s:lnCollate = s:lnNr
-    let s:txt  = s:txt .      "   JobSplit: <" . s:GetElementOutOfList(g:prd_jobSplitList, g:prd_jobSplitIdx) . ">\n"
+    let s:txt  = s:txt .      '   JobSplit: <' . s:GetElementOutOfList(g:prd_jobSplitList, g:prd_jobSplitIdx) . ">\n"
     let s:lnNr = s:lnNr + 1
     let s:lnJobSplit = s:lnNr
     let s:txt  = s:txt .      "\n"
     let s:lnNr = s:lnNr + 1
-    let s:txt  = s:txt .      "   Left:     <" . s:GetElementOutOfList(g:prd_leftList, g:prd_leftIdx) . ">\n"
+    let s:txt  = s:txt .      '   Left:     <' . s:GetElementOutOfList(g:prd_leftList, g:prd_leftIdx) . ">\n"
     let s:lnNr = s:lnNr + 1
     let s:lnLeft = s:lnNr
-    let s:txt  = s:txt .      "   Right:    <" . s:GetElementOutOfList(g:prd_rightList, g:prd_rightIdx) . ">\n"
+    let s:txt  = s:txt .      '   Right:    <' . s:GetElementOutOfList(g:prd_rightList, g:prd_rightIdx) . ">\n"
     let s:lnNr = s:lnNr + 1
     let s:lnRight = s:lnNr
-    let s:txt  = s:txt .      "   Top:      <" . s:GetElementOutOfList(g:prd_topList, g:prd_topIdx) . ">\n"
+    let s:txt  = s:txt .      '   Top:      <' . s:GetElementOutOfList(g:prd_topList, g:prd_topIdx) . ">\n"
     let s:lnNr = s:lnNr + 1
     let s:lnTop = s:lnNr
-    let s:txt  = s:txt .      "   Bottom:   <" . s:GetElementOutOfList(g:prd_bottomList, g:prd_bottomIdx) . ">\n"
+    let s:txt  = s:txt .      '   Bottom:   <' . s:GetElementOutOfList(g:prd_bottomList, g:prd_bottomIdx) . ">\n"
     let s:lnNr = s:lnNr + 1
     let s:lnBottom = s:lnNr
     let s:txt  = s:txt .      "\n"
     let s:lnNr = s:lnNr + 1
-    let s:txt  = s:txt .      "   Dialog:   <" . s:GetElementOutOfList(g:prd_dialogList, g:prd_dialogIdx) . ">\n"
+    let s:txt  = s:txt .      '   Dialog:   <' . s:GetElementOutOfList(g:prd_dialogList, g:prd_dialogIdx) . ">\n"
     let s:lnNr = s:lnNr + 1
     let s:lnDialog = s:lnNr
 
@@ -474,11 +474,11 @@ endfunction
 "*****************************************************************************
 function s:SetLocalKeyMappings()
 
-    nnoremap <buffer> <silent> q       :call <SID>prd_Exit()<cr>
-    nnoremap <buffer> <silent> p       :call <SID>prd_StartPrinting()<cr>
-    nnoremap <buffer> <silent> <Tab>   :call <SID>prd_ToggleParameter(1)<cr>
-    nnoremap <buffer> <silent> <S-Tab> :call <SID>prd_ToggleParameter(-1)<cr>
-    nnoremap <buffer> <silent> ?       :call <SID>prd_ShowHelpOnParameter()<cr>
+    nnoremap <buffer> <silent> q       :call <SID>PRD_Exit()<cr>
+    nnoremap <buffer> <silent> p       :call <SID>PRD_StartPrinting()<cr>
+    nnoremap <buffer> <silent> <Tab>   :call <SID>PRD_ToggleParameter(1)<cr>
+    nnoremap <buffer> <silent> <S-Tab> :call <SID>PRD_ToggleParameter(-1)<cr>
+    nnoremap <buffer> <silent> ?       :call <SID>PRD_ShowHelpOnParameter()<cr>
 
 endfunction
 
@@ -620,8 +620,8 @@ endfunction
 function s:SetPrintdevice()
     let element = s:GetElementOutOfList(g:prd_prtDeviceList, g:prd_prtDeviceIdx)
 
-    if (tolower(element) == "standard")
-        let &printdevice = ""
+    if (tolower(element) ==# 'standard')
+        let &printdevice = ''
     else
         let &printdevice = element
     endif
@@ -639,24 +639,24 @@ endfunction
 "*****************************************************************************
 function s:SetPrintoptions()
 
-    let &printoptions =   "left:"     .         s:GetElementOutOfList(g:prd_leftList,     g:prd_leftIdx    )        . "," 
-                        \."right:"    .         s:GetElementOutOfList(g:prd_rightList,    g:prd_rightIdx   )        . "," 
-                        \."top:"      .         s:GetElementOutOfList(g:prd_topList,      g:prd_topIdx     )        . "," 
-                        \."bottom:"   .         s:GetElementOutOfList(g:prd_bottomList,   g:prd_bottomIdx  )        . "," 
-                        \."header:"   .         s:GetElementOutOfList(g:prd_headerList,   g:prd_headerIdx  )        . "," 
-                        \."duplex:"   .         s:GetElementOutOfList(g:prd_duplexList,   g:prd_duplexIdx  )        . "," 
-                        \."paper:"    .         s:GetElementOutOfList(g:prd_paperList,    g:prd_paperIdx   )        . "," 
-                        \."number:"   . strpart(s:GetElementOutOfList(g:prd_lineNrList,   g:prd_lineNrIdx  ), 0, 1) . "," 
-                        \."wrap:"     . strpart(s:GetElementOutOfList(g:prd_wrapList,     g:prd_wrapIdx    ), 0, 1) . "," 
-                        \."collate:"  . strpart(s:GetElementOutOfList(g:prd_collateList,  g:prd_collateIdx ), 0, 1) . "," 
-                        \."jobSplit:" . strpart(s:GetElementOutOfList(g:prd_jobSplitList, g:prd_jobSplitIdx), 0, 1) . "," 
-                        \."portrait:" . strpart(s:GetElementOutOfList(g:prd_portraitList, g:prd_portraitIdx), 0, 1)
+    let &printoptions =   'left:'     .         s:GetElementOutOfList(g:prd_leftList,     g:prd_leftIdx    )        . ',' 
+                        \.'right:'    .         s:GetElementOutOfList(g:prd_rightList,    g:prd_rightIdx   )        . ',' 
+                        \.'top:'      .         s:GetElementOutOfList(g:prd_topList,      g:prd_topIdx     )        . ',' 
+                        \.'bottom:'   .         s:GetElementOutOfList(g:prd_bottomList,   g:prd_bottomIdx  )        . ',' 
+                        \.'header:'   .         s:GetElementOutOfList(g:prd_headerList,   g:prd_headerIdx  )        . ',' 
+                        \.'duplex:'   .         s:GetElementOutOfList(g:prd_duplexList,   g:prd_duplexIdx  )        . ',' 
+                        \.'paper:'    .         s:GetElementOutOfList(g:prd_paperList,    g:prd_paperIdx   )        . ',' 
+                        \.'number:'   . strpart(s:GetElementOutOfList(g:prd_lineNrList,   g:prd_lineNrIdx  ), 0, 1) . ',' 
+                        \.'wrap:'     . strpart(s:GetElementOutOfList(g:prd_wrapList,     g:prd_wrapIdx    ), 0, 1) . ',' 
+                        \.'collate:'  . strpart(s:GetElementOutOfList(g:prd_collateList,  g:prd_collateIdx ), 0, 1) . ',' 
+                        \.'jobSplit:' . strpart(s:GetElementOutOfList(g:prd_jobSplitList, g:prd_jobSplitIdx), 0, 1) . ',' 
+                        \.'portrait:' . strpart(s:GetElementOutOfList(g:prd_portraitList, g:prd_portraitIdx), 0, 1)
                         
     if has('syntax')
-        if (s:GetElementOutOfList(g:prd_syntaxList, g:prd_syntaxIdx) == "no")
-            let &printoptions = &printoptions . ",syntax:n"
+        if (s:GetElementOutOfList(g:prd_syntaxList, g:prd_syntaxIdx) ==? 'no')
+            let &printoptions = &printoptions . ',syntax:n'
         else
-            let &printoptions = &printoptions . ",syntax:y"
+            let &printoptions = &printoptions . ',syntax:y'
         endif
     endif
 
@@ -716,10 +716,10 @@ function s:SetColorschemeForPrinting()
     if has('syntax')
         let element = s:GetElementOutOfList(g:prd_syntaxList, g:prd_syntaxIdx)
 
-        if ( (tolower(element) != "no") && (tolower(element) != "current") )
+        if ( (tolower(element) !=# 'no') && (tolower(element) !=# 'current') )
             let s:flagColorschemeDone = 1
             
-            let cmdSetColorScheme = "colorscheme ".element 
+            let cmdSetColorScheme = 'colorscheme '.element 
             execute(cmdSetColorScheme)
         endif
     endif
@@ -748,7 +748,7 @@ function s:BackupSettings()
         if exists('g:colors_name')
             let s:backupColorscheme = g:colors_name
         else
-            let s:backupColorscheme = "default"
+            let s:backupColorscheme = 'default'
         endif
     endif
     
@@ -776,7 +776,7 @@ function s:RestoreSettings()
         " did we load a colorscheme within this script?  
         " then we have to restore
         if (s:flagColorschemeDone == 1)
-            execute("colorscheme " . s:backupColorscheme)
+            execute('colorscheme ' . s:backupColorscheme)
         endif
     endif
     
@@ -792,9 +792,9 @@ endfunction
 "**   exit this script:                                                     **
 "**     - close buffer of user-interface if there is one                    **
 "*****************************************************************************
-function <SID>prd_Exit()
+function <SID>PRD_Exit()
 
-    execute("buffer " . s:bufferSrc)
+    execute('buffer ' . s:bufferSrc)
     
 endfunction
 
@@ -810,11 +810,11 @@ endfunction
 "**   Toggle parameter under cursor to next/previous value.                 **
 "**   This is done by inc./decreasing the actual index.                     **
 "*****************************************************************************
-function <SID>prd_ToggleParameter(step)
-    let list = ""
+function <SID>PRD_ToggleParameter(step)
+    let list = ''
     let idx  = 0
 
-    let lineNr = line(".")
+    let lineNr = line('.')
 
 
     " switch parameter under cursor to next/previous element in list
@@ -964,7 +964,7 @@ function <SID>prd_ToggleParameter(step)
         let list = g:prd_dialogList
         let idx  = g:prd_dialogIdx
     else
-        echo "no parameter under cursor..."
+        echo 'no parameter under cursor...'
         return
     endif
 
@@ -972,13 +972,13 @@ function <SID>prd_ToggleParameter(step)
     if (idx != 0)     " is cursor in a parameter line?
         setlocal modifiable
         
-        let lineNr = line(".")           " set cursor to start of parameter <...>
-        let colNr  = col(".")
+        let lineNr = line('.')           " set cursor to start of parameter <...>
+        let colNr  = col('.')
         call cursor(lineNr, s:colPara)
         
                     " delete line from start of parameter to end of line
                     " and add new element from element-list with index 'idx'
-        execute("normal d$i" . "<" . s:GetElementOutOfList(list, idx) . ">")
+        execute('normal d$i' . '<' . s:GetElementOutOfList(list, idx) . '>')
 
         call cursor(lineNr, colNr)       " reset cursor to start position
         
@@ -996,43 +996,43 @@ endfunction
 "** remarks:                                                                **
 "**   show some help on parameter under cursor                              **
 "*****************************************************************************
-function <SID>prd_ShowHelpOnParameter()
-    let lineNr = line(".")
+function <SID>PRD_ShowHelpOnParameter()
+    let lineNr = line('.')
 
     if (lineNr == s:lnPrtDev)
-        echo "printer device to be used for printing"
+        echo 'printer device to be used for printing'
     elseif (lineNr == s:lnFont)
         echo "font and it's size used for printing"
     elseif (lineNr == s:lnPaper)
-        echo "format of paper"
+        echo 'format of paper'
     elseif (lineNr == s:lnPortrait)
-        echo "orientation of paper; <yes> portrait, <no> landscape"
+        echo 'orientation of paper; <yes> portrait, <no> landscape'
     elseif (lineNr == s:lnHeader)
-        echo "number of lines for header; <0> no header"
+        echo 'number of lines for header; <0> no header'
     elseif (lineNr == s:lnLineNr)
-        echo "print line-numbers"
+        echo 'print line-numbers'
     elseif (lineNr == s:lnSyntax)
-        echo "use syntax-highlighting; <no> off, else use colorscheme"
+        echo 'use syntax-highlighting; <no> off, else use colorscheme'
     elseif (lineNr == s:lnWrap)
-        echo "<yes> wrap long lines, <no> truncate long lines"
+        echo '<yes> wrap long lines, <no> truncate long lines'
     elseif (lineNr == s:lnDuplex)
-        echo "<off> print on one side, <long>/<short> print on both sides"
+        echo '<off> print on one side, <long>/<short> print on both sides'
     elseif (lineNr == s:lnCollate)
-        echo "<yes> collating 123, 123, 123, <no> no collating 111, 222, 333"
+        echo '<yes> collating 123, 123, 123, <no> no collating 111, 222, 333'
     elseif (lineNr == s:lnJobSplit)
-        echo "<yes> each copy separate job, <no> all copies one job"
+        echo '<yes> each copy separate job, <no> all copies one job'
     elseif (lineNr == s:lnLeft)
-        echo "left margin"
+        echo 'left margin'
     elseif (lineNr == s:lnRight)
-        echo "right margin"
+        echo 'right margin'
     elseif (lineNr == s:lnTop)
-        echo "top margin"
+        echo 'top margin'
     elseif (lineNr == s:lnBottom)
-        echo "bottom margin"
+        echo 'bottom margin'
     elseif (lineNr == s:lnDialog)
-        echo "MS-Windows only: show printer dialog"
+        echo 'MS-Windows only: show printer dialog'
     else
-        echo "to get help move cursor on parameter"
+        echo 'to get help move cursor on parameter'
     endif
 
 endfunction
@@ -1048,13 +1048,13 @@ endfunction
 "**   start printing...                                                     **
 "**                                                                         **
 "*****************************************************************************
-function <SID>prd_StartPrinting()
+function <SID>PRD_StartPrinting()
 
     if (bufexists(s:bufferSrc))          " is buffer to be printed still there?
     
         " switch to buffer to be printed (current dialog buffer will
         " be deleted automaticall by doing this)
-        execute("buffer ".s:bufferSrc)
+        execute('buffer '.s:bufferSrc)
 
         " backup VIM settings we will change
         call s:BackupSettings()
@@ -1077,10 +1077,10 @@ function <SID>prd_StartPrinting()
         call s:SetColorschemeForPrinting()
 
         "*** setup command string
-        let cmdStr = s:startLine . "," . s:endLine . "hardcopy"
+        let cmdStr = s:startLine . ',' . s:endLine . 'hardcopy'
         
-        if (tolower(s:GetElementOutOfList(g:prd_dialogList, g:prd_dialogIdx)) == "no")
-            let cmdStr = cmdStr . "!"  
+        if (tolower(s:GetElementOutOfList(g:prd_dialogList, g:prd_dialogIdx)) ==# 'no')
+            let cmdStr = cmdStr . '!'  
         endif
         
         execute(cmdStr)
@@ -1088,7 +1088,7 @@ function <SID>prd_StartPrinting()
         " restore VIM settings we have changed
         call s:RestoreSettings()
     else                                 "*** buffer to be printed does not exist
-        execute("dbuffer ".s:bufferUser)
+        execute('dbuffer '.s:bufferUser)
         call s:Error(2)
         return -1
     endif
@@ -1108,13 +1108,13 @@ endfunction
 function s:Error(errNr)
     
     if (a:errNr == 1)
-        echo s:scriptName.": no buffer to be printed"
+        echo s:scriptName.': no buffer to be printed'
     elseif (a:errNr == 2)
-        echo s:scriptName.": buffer to be printed does not exist"
+        echo s:scriptName.': buffer to be printed does not exist'
     elseif (a:errNr == 3)
-        echo s:scriptName.": this version of VIM does not support printing"
+        echo s:scriptName.': this version of VIM does not support printing'
     else
-        echo s:scriptName.": unknown error occured"
+        echo s:scriptName.': unknown error occured'
     endif
 
 endfunction
