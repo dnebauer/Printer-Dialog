@@ -980,7 +980,7 @@ function <SID>PRD_ToggleParameter(step)
     setlocal modifiable
     let l:colNr  = col('.')  " remember current position
     call cursor(l:lineNr, s:colPara)  " move to option field
-    execute 'normal d$i' . '<' . l:element . '>'
+    execute 'normal d$a' . '<' . l:element . '>'
     call cursor(l:lineNr, l:colNr)  " return to previous position
     setlocal nomodifiable
 
