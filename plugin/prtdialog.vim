@@ -302,13 +302,15 @@ function s:UpdateDialog()
     let l:txt  = ''
     let l:txt  .= "\"   PRINTER DIALOG\n"
     let l:lnNr += 1
-    let l:txt  .= "\"   p: start printing, q: cancel,\n"
+    let l:txt  .= "\"     <p>: start printing      <q>: cancel,\n"
     let l:lnNr += 1
-    let l:txt  .= "\"   Tab/S-Tab: toggle to next/previous,\n"
+    let l:txt  .= "\"   <Tab>: toggle to next  "
+                \ . "<S-Tab>: toggle to previous,\n"
     let l:lnNr += 1
-    let l:txt  .= "\"   ?: help on parameter,\n"
+    let l:txt  .= "\"     <?>: help on option\n"
     let l:lnNr += 1
-    let l:txt  .= "\"   :help printer-dialog for detailed help\n"
+    let l:txt  .= "\"   **** |:help printer-dialog| "
+                \ . "for detailed help ****\n"
     let l:lnNr += 1
     let l:txt  .= "\n"
     let l:lnNr += 1
@@ -322,7 +324,7 @@ function s:UpdateDialog()
     let l:lnNr += 1
     let l:txt  .= '>Printer:    <' 
                 \ . s:GetElementOutOfList(g:prd_prtDeviceList,
-                \ g:prd_prtDeviceIdx) . '>\n'
+                \ g:prd_prtDeviceIdx) . ">\n"
     let l:lnNr += 1
     let s:lnPrtDev = l:lnNr
     let l:txt  .= "\n"
