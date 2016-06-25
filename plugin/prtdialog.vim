@@ -153,18 +153,18 @@ if !exists('g:prd_bottomIdx')
     let g:prd_bottomIdx  = 2
 endif
 
-" - show Windows print dialog before printing [default: no]
+" - show Windows print dialog before printing [default: no]            {{{3
 if !exists('g:prd_dialogList')
     let g:prd_dialogList = 'yes,no'
 endif
 if !exists('g:prd_dialogIdx')
     let g:prd_dialogIdx  = 2
-endif                                                                " }}}3
+endif
 
 " allow user to set a script specific printheader                      {{{2
 if !exists('g:prd_printheader')
     let g:prd_printheader = &printheader
-endif                                                                " }}}2
+endif
 
 
 " INITIALISATION:                                                      {{{1
@@ -220,7 +220,7 @@ function <SID>PRD_StartPrinterDialog(whatToPrint)
         call s:SetLocalKeyMappings()  " set keys for user (local to buffer)
     endif                                                            " }}}3
 
-endfunction                                                          " }}}2
+endfunction
 
 
 " CORE FUNCTIONS:                                                      {{{1
@@ -258,7 +258,7 @@ function s:OpenNewBuffer()
     iabclear <buffer>
     return 1                                                         " }}}3
 
-endfunction                                                          " }}}2
+endfunction
 
 " s:UpdateDialog()                                                     {{{2
 " intent: redraw print dialog
@@ -419,7 +419,7 @@ function s:UpdateDialog()
     put! = l:txt
     setlocal nomodifiable                                            " }}}3
 
-endfunction                                                          " }}}2
+endfunction
 
 " s:SetupSyntax()                                                      {{{2
 " intent: set syntax highlighting for user interface
@@ -446,7 +446,7 @@ function s:SetupSyntax()
         hi def link prdComment   Comment
     endif                                                            " }}}3
 
-endfunction                                                          " }}}2
+endfunction
 
 " s:SetLocalKeyMappings()                                              {{{2
 " intent: set local, temporary key-mappings for this buffer only          
@@ -461,7 +461,7 @@ function s:SetLocalKeyMappings()
     nnoremap <buffer> <silent> <S-Tab> :call <SID>PRD_ToggleParameter(-1)<cr>
     nnoremap <buffer> <silent> ?       :call <SID>PRD_ShowHelpOnParameter()<cr>
 
-endfunction                                                          " }}}2
+endfunction
 
 " s:GetElementOutOfList(strList, nIdx)                                 {{{2
 " intent: return n-th element of string list
@@ -503,7 +503,7 @@ function s:GetElementOutOfList(strList, nIdx)
                 \ l:posEnd - l:posStart + 1)  
     return l:element                                                 " }}}3
 
-endfunction                                                          " }}}2
+endfunction
 
 " s:GetNumberOfListElements()                                          {{{2
 " intent: get number of choices for each print options
@@ -536,7 +536,7 @@ function s:GetNumberOfListElements()
     let s:bottomMaxIdx    = s:GetMaxIdxOfList(g:prd_bottomList)
     let s:dialogMaxIdx    = s:GetMaxIdxOfList(g:prd_dialogList)
 
-endfunction                                                          " }}}2
+endfunction
 
 " s:GetMaxIdxOfList(strList)                                           {{{2
 " intent: get number of elements in string list
@@ -565,7 +565,7 @@ function s:GetMaxIdxOfList(strList)
     " return result                                                    {{{3
     return l:numOfElements                                           " }}}3
 
-endfunction                                                          " }}}2
+endfunction
 
 " s:SetPrintdevice()                                                   {{{2
 " intent: set 'printdevice' according to user selection
@@ -583,7 +583,7 @@ function s:SetPrintdevice()
         let &printdevice = l:element
     endif
 
-endfunction                                                          " }}}2
+endfunction
 
 " s:SetPrintoptions()                                                  {{{2
 " intent: set 'printoptions' according to user selection
@@ -606,57 +606,57 @@ function s:SetPrintoptions()
                 \                         g:prd_topIdx)
     let l:opts .= ',bottom:'
                 \ . s:GetElementOutOfList(g:prd_bottomList,
-                \                         g:prd_bottomIdx)           " }}}3
+                \                         g:prd_bottomIdx)
     
     " header                                                           {{{3
     let l:opts .= ',header:' 
                 \ . s:GetElementOutOfList(g:prd_headerList,
-                \                         g:prd_headerIdx)           " }}}3
+                \                         g:prd_headerIdx)
     
     " duplex                                                           {{{3
     let l:opts .= ',duplex:'
                 \ . s:GetElementOutOfList(g:prd_duplexList,
-                \                         g:prd_duplexIdx)           " }}}3
+                \                         g:prd_duplexIdx)
     
     " paper size                                                       {{{3
     let l:opts .= ',paper:'
                 \ . s:GetElementOutOfList(g:prd_paperList,
-                \                         g:prd_paperIdx)            " }}}3
+                \                         g:prd_paperIdx)
     
     " line numbering                                                   {{{3
     let l:opts .= ',number:'
                 \ . strpart(
                 \   s:GetElementOutOfList(g:prd_lineNrList,
                 \                         g:prd_lineNrIdx),
-                \   0, 1)                                            " }}}3
+                \   0, 1)
     
     " line wrapping                                                    {{{3
     let l:opts .= ',wrap:'
                 \ . strpart(
                 \   s:GetElementOutOfList(g:prd_wrapList,
                 \                         g:prd_wrapIdx),
-                \   0, 1)                                            " }}}3
+                \   0, 1)
     
     " collate                                                          {{{3
     let l:opts .= ',collate:'
                 \ . strpart(
                 \   s:GetElementOutOfList(g:prd_collateList,
                 \                         g:prd_collateIdx),
-                \   0, 1)                                            " }}}3
+                \   0, 1)
     
     " split copies into individual print jobs                          {{{3
     let l:opts .= ',jobSplit:'
                 \ . strpart(
                 \   s:GetElementOutOfList(g:prd_jobSplitList,
                 \                         g:prd_jobSplitIdx),
-                \   0, 1)                                            " }}}3
+                \   0, 1)
     
     " orientation                                                      {{{3
     let l:opts .= ',portrait:'
                 \ . strpart(
                 \   s:GetElementOutOfList(g:prd_portraitList,
                 \                         g:prd_portraitIdx),
-                \   0, 1)                                            " }}}3
+                \   0, 1)
     
     " syntax highlighting                                              {{{3
     if has('syntax')
@@ -667,13 +667,13 @@ function s:SetPrintoptions()
         else
             let l:opts .= ',syntax:y'
         endif
-    endif                                                            " }}}3
+    endif
     
     " set &printoptions                                                {{{3
     let l:opts = strpart(l:opts, 1)
     let &printoptions = l:opts                                       " }}}3
 
-endfunction                                                          " }}}2
+endfunction
 
 " s:SetPrintfont()                                                     {{{2
 " intent: set 'printfont' from user selection
@@ -684,7 +684,7 @@ function s:SetPrintfont()
 
     let &printfont = s:GetElementOutOfList(g:prd_fontList, g:prd_fontIdx)
 
-endfunction                                                          " }}}2
+endfunction
 
 " s:SetPrintheader()                                                   {{{2
 " intent: set 'printheader' from user selection
@@ -695,7 +695,7 @@ function s:SetPrintheader()
 
     let &printheader = g:prd_printheader
 
-endfunction                                                          " }}}2
+endfunction
 
 " s:SetColorschemeForPrinting()                                        {{{2
 " intent: set colorscheme from user selection
@@ -724,7 +724,7 @@ function s:SetColorschemeForPrinting()
         execute 'colorscheme' l:element 
     endif
 
-endfunction                                                          " }}}2
+endfunction
 
 " s:BackupSettings()                                                   {{{2
 " intent: backup printer and colorscheme settings
@@ -748,7 +748,7 @@ function s:BackupSettings()
         endif
     endif
 
-endfunction                                                          " }}}2
+endfunction
 
 " s:RestoreSettings()                                                  {{{2
 " intent: restore printer and colorscheme settings
@@ -769,7 +769,7 @@ function s:RestoreSettings()
         execute 'colorscheme' s:backupColorscheme
     endif
 
-endfunction                                                          " }}}2
+endfunction
 
 " <SID>PRD_Exit()                                                      {{{2
 " intent: exit script and close user interface buffer if present
@@ -782,7 +782,7 @@ function <SID>PRD_Exit()
 
     execute 'buffer' s:bufferSrc
 
-endfunction                                                          " }}}2
+endfunction
 
 " <SID>PRD_ToggleParameter(step)                                       {{{2
 " intent: toggle parameter under cursor to next or previous value
@@ -955,7 +955,7 @@ function <SID>PRD_ToggleParameter(step)
             let g:prd_bottomIdx = s:bottomMaxIdx
         endif
         let l:element = s:GetElementOutOfList(g:prd_bottomList,
-                    \                         g:prd_bottomIdx)       " }}}3
+                    \                         g:prd_bottomIdx)
     
     " - display windows print dialog                                   {{{3
     elseif (l:lineNr == s:lnDialog)
@@ -984,7 +984,7 @@ function <SID>PRD_ToggleParameter(step)
     call cursor(l:lineNr, l:colNr)  " return to previous position
     setlocal nomodifiable
 
-endfunction                                                          " }}}2
+endfunction
 
 " <SID>PRD_ShowHelpOnParameter()                                       {{{2
 " intent: how help on parameter under cursor
@@ -1031,7 +1031,7 @@ function <SID>PRD_ShowHelpOnParameter()
         echo 'to get help move cursor on parameter'
     endif
 
-endfunction                                                          " }}}2
+endfunction
 
 " <SID>PRD_StartPrinting()                                             {{{2
 " intent: start printing
@@ -1055,7 +1055,7 @@ function <SID>PRD_StartPrinting()
     " switch to buffer to be printed                                   {{{3
     " - this automatically deleted the current dialog buffer
     execute 'buffer' s:bufferSrc
-                                                                     " }}}3
+
     " backup vim print and colorscheme settings
     call s:BackupSettings()
     
@@ -1083,7 +1083,7 @@ function <SID>PRD_StartPrinting()
     " signal success                                                   {{{3
     return 1                                                         " }}}3
 
-endfunction                                                          " }}}2
+endfunction
                                                                      " }}}1
 
 " vim: fdm=marker :
