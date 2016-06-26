@@ -57,14 +57,14 @@ function! s:SetPrintDevices()
         if !exists('s:displayedMissingExeMessage')
             let s:displayedMissingExeMessage = 1
             echo "Can't retrieve print device listing -"
-            echo '  missing' .join(l:missing_exes, ', ')
+            echo '  missing ' .join(l:missing_exes, ', ')
         endif
         return
     endif
 
     " get print devices                                                {{{5
     let l:cmd = "lpstat -p | grep '^printer' | grep 'enabled' "
-                \ "| awk '{print $2}'"
+                \ . "| awk '{print $2}'"
     let l:print_devices = systemlist(l:cmd)
     if v:shell_error
         echoerr 'Unable to obtain print device listing'
