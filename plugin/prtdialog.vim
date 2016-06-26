@@ -43,9 +43,9 @@ function! s:SetPrintDevices()
     " add default print device                                         {{{5
     let g:prd_printDevices   = ['standard']
 
-    " check for all utils needed to extract print devices              {{{5
+    " check for utils needed to extract print devices                  {{{5
     let l:missing_exes = []
-    for l:exe in ['lstat', 'grep', 'awk']
+    for l:exe in ['lpstat', 'grep', 'awk']
         if !executable(l:exe)
             call add(l:missing_exes, l:exe)
         endif
