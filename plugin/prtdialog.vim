@@ -586,7 +586,9 @@ endfunction
 function! s:SetPrintDeviceOptionChoices()
 
     " get previously selected printer                                  {{{3
-    if !empty(s:prd_printDevices) && exists('s:prd_printDeviceIdx')
+    if exists('s:prd_printDevices') && !empty(s:prd_printDevices)
+                \ && exists('s:prd_printDeviceIdx')
+                \ && s:prd_printDeviceIdx !=? ''
         let s:previousPrintDevice =
                     \ s:prd_printDevices[s:prd_printDeviceIdx]
     endif
