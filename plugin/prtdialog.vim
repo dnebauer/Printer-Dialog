@@ -170,9 +170,6 @@ function s:UpdateDialog()
     " set column of parameter                                          {{{3
     let s:colPara = 14
     
-    " delete existing content                                          {{{3
-    %delete
-    
     " create buffer content                                            {{{3
     let s:optLine = {}
     let l:c = []
@@ -216,7 +213,7 @@ function s:UpdateDialog()
                 \ . '>')
     let s:optLine.number = len(l:c)
     call add(l:c, '   Syntax:   <' 
-                \ . g:prd_syntaxSchemes[g:prd_syntaxSchemeIdx]
+                \ . s:prd_syntaxSchemes[s:prd_syntaxSchemeIdx]
                 \ . '>')
     let s:optLine.syntax = len(l:c)
     call add(l:c, '')
@@ -262,6 +259,7 @@ function s:UpdateDialog()
     " write content to buffer                                          {{{3
     let l:txt = join(l:c, "\n")
     setlocal modifiable
+    %delete
     put! = l:txt
     setlocal nomodifiable                                            " }}}3
 
@@ -729,7 +727,7 @@ function s:SetPrintoptions()
     
     " syntax highlighting                                              {{{3
     if has('syntax')
-        if g:prd_syntaxSchemes[g:prd_syntaxSchemeIdx] ==? 'no'
+        if s:prd_syntaxSchemes[s:prd_syntaxSchemeIdx] ==? 'no'
             let l:opts .= ',syntax:n'
         else
             let l:opts .= ',syntax:y'
@@ -782,7 +780,7 @@ function s:SetColorschemeForPrinting()
 
     let s:flagColorschemeDone = 0
     if !has('syntax') | return | endif
-    let l:element = tolower(g:prd_syntaxSchemes[g:prd_syntaxSchemeIdx]) 
+    let l:element = tolower(s:prd_syntaxSchemes[s:prd_syntaxSchemeIdx]) 
     if l:element !~# '^no$\|^current$'
         let s:flagColorschemeDone = 1
         execute 'colorscheme' l:element 
@@ -915,13 +913,13 @@ function <SID>PRD_ToggleParameter(step)
     
     " - syntax highlighting                                            {{{3
     elseif l:lineNr == s:optLine.syntax
-        let g:prd_syntaxSchemeIdx = g:prd_syntaxSchemeIdx + a:step 
-        if g:prd_syntaxSchemeIdx == len(g:prd_syntaxSchemes)
-            let g:prd_syntaxSchemeIdx = 0
-        elseif g:prd_syntaxSchemeIdx < 0
-            let g:prd_syntaxSchemeIdx = len(g:prd_syntaxSchemes) - 1
+        let s:prd_syntaxSchemeIdx = s:prd_syntaxSchemeIdx + a:step 
+        if s:prd_syntaxSchemeIdx == len(s:prd_syntaxSchemes)
+            let s:prd_syntaxSchemeIdx = 0
+        elseif s:prd_syntaxSchemeIdx < 0
+            let s:prd_syntaxSchemeIdx = len(s:prd_syntaxSchemes) - 1
         endif
-        let l:element = g:prd_syntaxSchemes[g:prd_syntaxSchemeIdx]
+        let l:element = s:prd_syntaxSchemes[s:prd_syntaxSchemeIdx]
     
     " - line wrapping                                                  {{{3
     elseif l:lineNr == s:optLine.wrap
