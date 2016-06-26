@@ -46,6 +46,7 @@ let s:defaultPrintexpr = "system('lpr' . (&printdevice == '' ? '' "
             \ . 'delete(v:fname_in) + v:shell_error'
 
 " buffer variable                                                      {{{2
+" TODO: check when this is created and whether this line can be removed
 let s:buffer = {}
 
 
@@ -317,6 +318,11 @@ function! s:SetPrintOptionChoices()
     endif
 
     " fonts [default: courier 8]                                       {{{3
+    " TODO: investigate additional fonts
+    " TODO: possibly change default to courier:h10
+    " TODO: possibly separate font name and size into different settings
+    " TODO: possible dynamic setting of allowed point sizes when font
+    "       selected
     if !exists('s:prd_fonts')
         if exists('g:prd_fonts')
             let s:prd_fonts = copy(g:prd_fonts)
@@ -1124,7 +1130,9 @@ function <SID>PRD_StartPrinting()
         let l:cmd .= '!'  
     endif
 
-    " work with plugins that alter 'printexpr'
+    " work with plugins that alter 'printexpr'                         {{{3
+    " TODO: possibly backup and restore printdevice. printfont,
+    "       printheader, printoptions and, if altered, colorscheme
     let l:printexpr_backup = &printexpr
     let &printexpr = s:defaultPrintexpr
 
