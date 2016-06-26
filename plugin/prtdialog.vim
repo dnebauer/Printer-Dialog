@@ -32,7 +32,7 @@ nmap <silent> <unique> <script> <Plug>PRD_PrinterDialogNormal      :call <SID>PR
 
 " default properties                                                   {{{2
 
-" - devices [default: default]                                         {{{3
+" - devices [default: standard]                                        {{{3
 if !exists('g:prd_printDevices')
     let g:prd_printDevices   = ['standard']
 endif
