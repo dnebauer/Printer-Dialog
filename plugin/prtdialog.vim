@@ -233,7 +233,25 @@ endfunction
 function s:OpenNewBuffer()
 
     " open buffer                                                      {{{3
-    execute 'enew'
+    " - fails if buffer contains unsaved changes
+    try
+        update
+        execute 'enew'
+    catch /^Vim\%((\a\+)\)\=:E32/
+        " E32: No file name
+        " tried to update buffer that has no file name
+        echo "PrtDialog: can't print unnamed buffer - save to file"
+        return
+    catch /^Vim\%((\a\+)\)\=:E37/
+        " E37: No write since last change (add ! to override)
+        " tried to create new buffer when current one has unsaved changes
+        echo "PrtDialog: can't print while buffer has unsaved changes"
+        return
+    catch /^Vim\%((\a\+)\)\=:E/
+        " all other errors
+        echo "PrtDialog: can't print due to unexpected error"
+        return
+    endtry
     let s:buffer.user = winbufnr(0)
     
     " abort if opened self                                             {{{3
