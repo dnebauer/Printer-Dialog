@@ -870,7 +870,7 @@ function <SID>PRD_ToggleParameter(step)
     " then extract new option value:
     " - print device                                                   {{{3
     if     l:lineNr == s:optLine.printDevice
-        let s:prd_printDeviceIdx = s:prd_printDeviceIdx + a:step 
+        let s:prd_printDeviceIdx += a:step 
         if s:prd_printDeviceIdx == len(s:prd_printDevices)
             let s:prd_printDeviceIdx = 0
         elseif s:prd_printDeviceIdx < 0
@@ -880,7 +880,7 @@ function <SID>PRD_ToggleParameter(step)
 
     " - font                                                           {{{3
     elseif l:lineNr == s:optLine.font
-        let s:prd_fontIdx = s:prd_fontIdx + a:step 
+        let s:prd_fontIdx += a:step 
         if s:prd_fontIdx == len(s:prd_fonts)
             let s:prd_fontIdx = 0
         elseif s:prd_fontIdx < 0
@@ -890,7 +890,7 @@ function <SID>PRD_ToggleParameter(step)
 
     " - paper size                                                     {{{3
     elseif l:lineNr == s:optLine.paper
-        let s:prd_paperSizeIdx = s:prd_paperSizeIdx + a:step 
+        let s:prd_paperSizeIdx += a:step 
         if s:prd_paperSizeIdx == len(s:prd_paperSizes)
             let s:prd_paperSizeIdx = 0
         elseif s:prd_paperSizeIdx < 0
@@ -900,7 +900,7 @@ function <SID>PRD_ToggleParameter(step)
     
     " - orientation                                                    {{{3
     elseif l:lineNr == s:optLine.portrait
-        let s:prd_portraitIdx = s:prd_portraitIdx + a:step 
+        let s:prd_portraitIdx += a:step 
         if s:prd_portraitIdx == len(s:prd_portrait)
             let s:prd_portraitIdx = 0
         elseif s:prd_portraitIdx < 0
@@ -910,7 +910,7 @@ function <SID>PRD_ToggleParameter(step)
     
     " - header size                                                    {{{3
     elseif l:lineNr == s:optLine.header
-        let s:prd_headerSizeIdx = s:prd_headerSizeIdx + a:step 
+        let s:prd_headerSizeIdx += a:step 
         if s:prd_headerSizeIdx == len(s:prd_headerSizes)
             let s:prd_headerSizeIdx = 0
         elseif s:prd_headerSizeIdx < 0
@@ -920,7 +920,7 @@ function <SID>PRD_ToggleParameter(step)
     
     " - line numbering                                                 {{{3
     elseif l:lineNr == s:optLine.number
-        let s:prd_numberLinesIdx = s:prd_numberLinesIdx + a:step 
+        let s:prd_numberLinesIdx += a:step 
         if s:prd_numberLinesIdx == len(s:prd_numberLines)
             let s:prd_numberLinesIdx = 0
         elseif s:prd_numberLinesIdx < 0
@@ -930,7 +930,7 @@ function <SID>PRD_ToggleParameter(step)
     
     " - syntax highlighting                                            {{{3
     elseif l:lineNr == s:optLine.syntax
-        let s:prd_syntaxSchemeIdx = s:prd_syntaxSchemeIdx + a:step 
+        let s:prd_syntaxSchemeIdx += a:step 
         if s:prd_syntaxSchemeIdx == len(s:prd_syntaxSchemes)
             let s:prd_syntaxSchemeIdx = 0
         elseif s:prd_syntaxSchemeIdx < 0
@@ -940,7 +940,7 @@ function <SID>PRD_ToggleParameter(step)
     
     " - line wrapping                                                  {{{3
     elseif l:lineNr == s:optLine.wrap
-        let s:prd_wrapLinesIdx = s:prd_wrapLinesIdx + a:step 
+        let s:prd_wrapLinesIdx += a:step 
         if s:prd_wrapLinesIdx == len(s:prd_wrapLines)
             let s:prd_wrapLinesIdx = 0
         elseif s:prd_wrapLinesIdx < 0
@@ -950,7 +950,7 @@ function <SID>PRD_ToggleParameter(step)
     
     " - duplex                                                         {{{3
     elseif l:lineNr == s:optLine.duplex
-        let s:prd_duplexIdx = s:prd_duplexIdx + a:step 
+        let s:prd_duplexIdx += a:step 
         if s:prd_duplexIdx == len(s:prd_duplex)
             let s:prd_duplexIdx = 0
         elseif s:prd_duplexIdx < 0
@@ -960,7 +960,7 @@ function <SID>PRD_ToggleParameter(step)
     
     " - collate                                                        {{{3
     elseif l:lineNr == s:optLine.collate
-        let s:prd_collateIdx = s:prd_collateIdx + a:step 
+        let s:prd_collateIdx += a:step 
         if s:prd_collateIdx == len(s:prd_collate)
             let s:prd_collateIdx = 0
         elseif s:prd_collateIdx < 0
@@ -970,7 +970,7 @@ function <SID>PRD_ToggleParameter(step)
     
     " - split copies into separate print jobs                          {{{3
     elseif l:lineNr == s:optLine.splitJob
-        let s:prd_splitPrintJobIdx = s:prd_splitPrintJobIdx + a:step 
+        let s:prd_splitPrintJobIdx += a:step 
         if s:prd_splitPrintJobIdx == len(s:prd_splitPrintJob)
             let s:prd_splitPrintJobIdx = 0
         elseif s:prd_splitPrintJobIdx < 0
@@ -980,7 +980,7 @@ function <SID>PRD_ToggleParameter(step)
     
     " - margins                                                        {{{3
     elseif l:lineNr == s:optLine.left
-        let s:prd_leftMarginIdx = s:prd_leftMarginIdx + a:step 
+        let s:prd_leftMarginIdx += a:step 
         if s:prd_leftMarginIdx == len(s:prd_leftMargin)
             let s:prd_leftMarginIdx = 0
         elseif s:prd_leftMarginIdx < 0
@@ -988,7 +988,7 @@ function <SID>PRD_ToggleParameter(step)
         endif
         let l:element = s:prd_leftMargin[s:prd_leftMarginIdx]
     elseif l:lineNr == s:optLine.right
-        let s:prd_rightMarginIdx = s:prd_rightMarginIdx + a:step 
+        let s:prd_rightMarginIdx += a:step 
         if s:prd_rightMarginIdx == len(s:prd_rightMargin)
             let s:prd_rightMarginIdx = 0
         elseif s:prd_rightMarginIdx < 0
@@ -996,7 +996,7 @@ function <SID>PRD_ToggleParameter(step)
         endif
         let l:element = s:prd_rightMargin[s:prd_rightMarginIdx]
     elseif l:lineNr == s:optLine.top
-        let s:prd_topMarginIdx = s:prd_topMarginIdx + a:step 
+        let s:prd_topMarginIdx += a:step 
         if s:prd_topMarginIdx == len(s:prd_topMargin)
             let s:prd_topMarginIdx = 0
         elseif s:prd_topMarginIdx < 0
@@ -1004,7 +1004,7 @@ function <SID>PRD_ToggleParameter(step)
         endif
         let l:element = s:prd_topMargin[s:prd_topMarginIdx]
     elseif l:lineNr == s:optLine.bottom
-        let s:prd_bottomMarginIdx = s:prd_bottomMarginIdx + a:step 
+        let s:prd_bottomMarginIdx += a:step 
         if s:prd_bottomMarginIdx == len(s:prd_bottomMargin)
             let s:prd_bottomMarginIdx = 0
         elseif s:prd_bottomMarginIdx < 0
@@ -1014,7 +1014,7 @@ function <SID>PRD_ToggleParameter(step)
     
     " - display windows print dialog                                   {{{3
     elseif l:lineNr == s:optLine.osPrintDialog
-        let s:prd_osPrintDialogIdx = s:prd_osPrintDialogIdx + a:step 
+        let s:prd_osPrintDialogIdx += a:step 
         if s:prd_osPrintDialogIdx == len(s:prd_osPrintDialog)
             let s:prd_osPrintDialogIdx = 0
         elseif s:prd_osPrintDialogIdx < 0
