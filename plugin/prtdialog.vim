@@ -84,6 +84,10 @@ endif
 
 " - syntax highlighting and colour scheme [default: vim default]       {{{3
 " s:SetSyntaxSchemes()                                                 {{{4
+"  intent: load optional colorschemes only if installed
+"  params: nil
+"  insert: nil
+"  return: n/a
 function! s:SetSyntaxSchemes()
     let g:prd_syntaxSchemes = ['no', 'current', 'default']
     for l:scheme in ['print_bw', 'zellner', 'solarized']
