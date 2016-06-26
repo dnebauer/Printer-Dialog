@@ -5,7 +5,8 @@
 "            forker by:       David Nebauer
 "                             <david (at) nebauer (point) org>
 " Copyright: (c) 2016 by David Nebauer
-" License:   GNU General Public License 2 (GPL 2) or later
+" License:   This plugin is made available under the same license as vim.
+"            See |:help license| for further details.
 " Purpose:   Provide a dialog to configure printer settings printing.
 "            To invoke this dialog, press <Leader>pd.
 "            For futher informations do |:help prtdialog|
