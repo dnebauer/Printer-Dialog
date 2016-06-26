@@ -88,7 +88,7 @@ function! s:SetSyntaxSchemes()
     let g:prd_syntaxSchemes = ['no', 'current', 'default']
     for l:scheme in ['print_bw', 'zellner', 'solarized']
         let l:path = 'colors/' . l:scheme . '.vim'
-        if globpath(&runtimepath, l:path, 1, 1)
+        if !empty(globpath(&runtimepath, l:path, 1, 1))
             call add(g:prd_syntaxSchemes, l:scheme)
         endif
     endfor
