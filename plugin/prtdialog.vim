@@ -30,226 +30,6 @@ endif
 vmap <silent> <unique> <script> <Plug>PRD_PrinterDialogVisual <ESC>:call <SID>PRD_StartPrinterDialog(0)<CR>
 nmap <silent> <unique> <script> <Plug>PRD_PrinterDialogNormal      :call <SID>PRD_StartPrinterDialog(1)<CR>
 
-" default properties                                                   {{{2
-
-" - devices [default: standard]                                        {{{3
-" s:SetPrintDevices()                                                  {{{4
-"  intent: load available printer devices
-"  params: nil
-"  insert: nil
-"  return: n/a
-function! s:SetPrintDevices()
-
-    " add default print device                                         {{{5
-    let g:prd_printDevices   = ['standard']
-
-    " check for utils needed to extract print devices                  {{{5
-    let l:missing_exes = []
-    for l:exe in ['lpstat', 'grep', 'awk']
-        if !executable(l:exe)
-            call add(l:missing_exes, l:exe)
-        endif
-    endfor
-
-    " exit if missing required utils                                   {{{5
-    " - display error message once only per session
-    if !empty(l:missing_exes)
-        if !exists('s:displayedMissingExeMessage')
-            let s:displayedMissingExeMessage = 1
-            echo "Can't retrieve print device listing -"
-            echo '  missing ' .join(l:missing_exes, ', ')
-        endif
-        return
-    endif
-
-    " get print devices                                                {{{5
-    let l:cmd = "lpstat -p | grep '^printer' | grep 'enabled' "
-                \ . "| awk '{print $2}'"
-    let l:print_devices = systemlist(l:cmd)
-    if v:shell_error
-        echoerr 'Unable to obtain print device listing'
-        if len(l:print_devices)
-            echoerr 'Shell feedback:'
-            for l:line in l:print_devices
-                echoerr '  ' . l:line
-            endfor
-        endif
-    endif
-
-    " add new print devices                                            {{{5
-    call extend(g:prd_printDevices, l:print_devices)
-
-    " get default device                                               {{{5
-    let l:cmd = "lpstat -d | awk '{print $NF}'"
-    let l:default_device = systemlist(l:cmd)
-    if v:shell_error || len(l:default_device)    != 1
-                \    || len(l:default_device[0]) == 0
-        echoerr 'Unable to obtain default print device'
-        if len(l:default_device)
-            echoerr 'Shell feedback:'
-            for l:line in l:default_device
-                echoerr '  ' . l:line
-            endfor
-        endif
-        return
-    endif
-    
-    " set default device                                               {{{5
-    let l:default_position = index(g:prd_printDevices,
-                \                  l:default_device[0])
-    if l:default_position != -1
-        let g:prd_printDeviceIdx = l:default_position
-    endif                                                            " }}}5
-
-endfunction                                                          " }}}4
-if !exists('g:prd_printDevices')
-    call s:SetPrintDevices()
-endif
-if !exists('g:prd_printDeviceIdx')
-    let g:prd_printDeviceIdx = 0
-endif
-
-" - fonts [default: courier 8]                                         {{{3
-if !exists('g:prd_fonts')
-    let g:prd_fonts   = ['courier:h6',  'courier:h8', 'courier:h10',
-                \        'courier:h12', 'courier:h14']
-endif
-if !exists('g:prd_fontIdx')
-    let g:prd_fontIdx = 1
-endif
-
-" - paper size [default: A4]                                           {{{3
-if !exists('g:prd_paperSizes')
-    let g:prd_paperSizes   = ['A3', 'A4',    'A5',     'B4',
-                \             'B5', 'legal', 'letter']
-endif
-if !exists('g:prd_paperSizeIdx')
-    let g:prd_paperSizeIdx = 1
-endif
-
-" - orientation [default: portrait]                                    {{{3
-if !exists('g:prd_portrait')
-    let g:prd_portrait    = ['yes', 'no']
-endif
-if !exists('g:prd_portraitIdx')
-    let g:prd_portraitIdx = 0
-endif
-
-" - header size [default: 2 lines]                                     {{{3
-if !exists('g:prd_headerSizes')
-    let g:prd_headerSizes   = [0, 1, 2, 3, 4, 5, 6]
-endif
-if !exists('g:prd_headerSizeIdx')
-    let g:prd_headerSizeIdx = 2
-endif
-
-" - number lines [default: yes]                                        {{{3
-if !exists('g:prd_numberLines')
-    let g:prd_numberLines    = ['yes', 'no']
-endif
-if !exists('g:prd_numberLinesIdx')
-    let g:prd_numberLinesIdx = 0
-endif
-
-" - syntax highlighting and colour scheme [default: vim default]       {{{3
-" s:SetSyntaxSchemes()                                                 {{{4
-"  intent: load optional colorschemes only if installed
-"  params: nil
-"  insert: nil
-"  return: n/a
-function! s:SetSyntaxSchemes()
-    let g:prd_syntaxSchemes = ['no', 'current', 'default']
-    for l:scheme in ['print_bw', 'zellner', 'solarized']
-        let l:path = 'colors/' . l:scheme . '.vim'
-        if !empty(globpath(&runtimepath, l:path, 1, 1))
-            call add(g:prd_syntaxSchemes, l:scheme)
-        endif
-    endfor
-endfunction                                                          " }}}4
-if !exists('g:prd_syntaxSchemes')
-    call s:SetSyntaxSchemes()
-endif
-if !exists('g:prd_syntaxSchemeIdx')
-    let g:prd_syntaxSchemeIdx = 2
-endif
-
-" - wrap or truncate long lines [default: wrap]                        {{{3
-if !exists('g:prd_wrapLines')
-    let g:prd_wrapLines   = ['yes', 'no']
-endif
-if !exists('g:prd_wrapLineIdx')
-    let g:prd_wrapLineIdx = 0
-endif
-
-" - duplex [default: on, bind on long edge]                            {{{3
-if !exists('g:prd_duplex')
-    let g:prd_duplex    = ['off', 'long', 'short']
-endif
-if !exists('g:prd_duplexIdx')
-    let g:prd_duplexIdx = 1
-endif
-
-" - collate [default: yes]                                             {{{3
-if !exists('g:prd_collate')
-    let g:prd_collate    = ['yes', 'no']
-endif
-if !exists('g:prd_collateIdx')
-    let g:prd_collateIdx = 0
-endif
-
-" - split copies into separate print jobs [default: no]                {{{3
-if !exists('g:prd_splitPrintJob')
-    let g:prd_splitPrintJob    = ['yes', 'no']
-endif
-if !exists('g:prd_splitPrintJobIdx')
-    let g:prd_splitPrintJobIdx = 1
-endif
-
-" - left margin [default: 15mm]                                        {{{3
-if !exists('g:prd_leftMargin')
-    let g:prd_leftMargin    = ['5mm', '10mm', '15mm', '20mm', '25mm']
-endif
-if !exists('g:prd_leftMarginIdx')
-    let g:prd_leftMarginIdx = 2
-endif
-
-" - right margin [default: 15mm]                                       {{{3
-if !exists('g:prd_rightMargin')
-    let g:prd_rightMargin    = ['5mm', '10mm', '15mm', '20mm', '25mm']
-endif
-if !exists('g:prd_rightMarginIdx')
-    let g:prd_rightMarginIdx = 2
-endif
-
-" - top margin [default: 10mm]                                         {{{3
-if !exists('g:prd_topMargin')
-    let g:prd_topMargin    = ['5mm', '10mm', '15mm', '20mm', '25mm']
-endif
-if !exists('g:prd_topMarginIdx')
-    let g:prd_topMarginIdx = 1
-endif
-
-" - bottom margin [default: 10mm]                                      {{{3
-if !exists('g:prd_bottomMargin')
-    let g:prd_bottomMargin    = ['5mm', '10mm', '15mm', '20mm', '25mm']
-endif
-if !exists('g:prd_bottomMarginIdx')
-    let g:prd_bottomMarginIdx = 1
-endif
-
-" - show Windows print dialog before printing [default: no]            {{{3
-if !exists('g:prd_osPrintDialog')
-    let g:prd_osPrintDialog    = ['yes', 'no']
-endif
-if !exists('g:prd_osPrintDialogIdx')
-    let g:prd_osPrintDialogIdx = 1
-endif
-
-" allow user to set a script specific printheader                      {{{2
-if !exists('g:prd_printheader')
-    let g:prd_printheader = &printheader
-endif
-
 
 " INITIALISATION:                                                      {{{1
 
@@ -270,12 +50,13 @@ let s:buffer = {}
 
 " INTERFACE FUNCTIONS:                                                 {{{1
 
-" PRD_StartPrinterDialog(whatToPrint)                                  {{{2
+" <SID>PRD_StartPrinterDialog(printRange)                              {{{2
 "  intent: get range to be printed and buffer, then start user interface
-"  params: whatToPrint - 0 is selected range, else whole buffer
+"  params: printRange - whether to print visual selection only,
+"                       or whole document [boolean]
 "  insert: nil
 "  return: n/a
-function <SID>PRD_StartPrinterDialog(whatToPrint)
+function <SID>PRD_StartPrinterDialog(printRange)
     
     " check that vim is compiled with print option                     {{{3
     if !has('printer')  " is this vim compiled with printing enabled?
@@ -283,10 +64,10 @@ function <SID>PRD_StartPrinterDialog(whatToPrint)
                     \ . ': this version of VIM does not support printing'
         return
     endif
-    let s:whatToPrint = a:whatToPrint
+    let s:printRange = a:printRange
 
     " get range to be printed                                          {{{3
-    if s:whatToPrint == 0
+    if s:printRange
         let s:range = {'start': line("'<"), 'end': line("'>")}
     else
         let s:range = {'start': 1, 'end': line('$')}
@@ -374,7 +155,7 @@ function s:UpdateDialog()
     endif
     
     " get range of buffer to be printed                                {{{3
-    if  s:whatToPrint == 0
+    if  s:printRange
         let l:range = 'lines ' . s:range.start . ' - ' . s:range.end
     else
         let l:range = 'whole file'
@@ -382,7 +163,9 @@ function s:UpdateDialog()
     
     " set up syntax highlighting                                       {{{3
     call s:SetupSyntax()
-    setlocal modifiable
+
+    " set print option choices                                         {{{3
+    set s:SetPrintOptionChoices()
 
     " set column of parameter                                          {{{3
     let s:colPara = 14
@@ -406,30 +189,30 @@ function s:UpdateDialog()
     call add(l:c, '   Range:     ' . l:range)
     call add(l:c, '')
     call add(l:c, '>Printer:    <'
-                \ . g:prd_printDevices[g:prd_printDeviceIdx]
+                \ . s:prd_printDevices[s:prd_printDeviceIdx]
                 \ . '>')
     let s:optLine.printDevice = len(l:c)
     call add(l:c, '')
     call add(l:c, '>Options:')
     call add(l:c, '   Font:     <'
-                \ . g:prd_fonts[g:prd_fontIdx]
+                \ . s:prd_fonts[s:prd_fontIdx]
                 \ . '>')
     let s:optLine.font = len(l:c)
     call add(l:c, '   Paper:    <'
-                \ . g:prd_paperSizes[g:prd_paperSizeIdx]
+                \ . s:prd_paperSizes[s:prd_paperSizeIdx]
                 \ . '>')
     let s:optLine.paper = len(l:c)
     call add(l:c, '   Portrait: <'
-                \ . g:prd_portrait[g:prd_portraitIdx]
+                \ . s:prd_portrait[s:prd_portraitIdx]
                 \ . '>')
     let s:optLine.portrait = len(l:c)
     call add(l:c, '')
     call add(l:c, '   Header:   <'
-                \ . g:prd_headerSizes[g:prd_headerSizeIdx]
+                \ . s:prd_headerSizes[s:prd_headerSizeIdx]
                 \ . '>')
     let s:optLine.header = len(l:c)
     call add(l:c, '   Line-Nr:  <' 
-                \ . g:prd_numberLines[g:prd_numberLinesIdx]
+                \ . s:prd_numberLines[s:prd_numberLinesIdx]
                 \ . '>')
     let s:optLine.number = len(l:c)
     call add(l:c, '   Syntax:   <' 
@@ -438,46 +221,47 @@ function s:UpdateDialog()
     let s:optLine.syntax = len(l:c)
     call add(l:c, '')
     call add(l:c, '   Wrap:     <' 
-                \ . g:prd_wrapLines[g:prd_wrapLineIdx]
+                \ . s:prd_wrapLines[s:prd_wrapLinesIdx]
                 \ . '>')
     let s:optLine.wrap = len(l:c)
     call add(l:c, '   Duplex:   <' 
-                \ . g:prd_duplex[g:prd_duplexIdx]
+                \ . s:prd_duplex[s:prd_duplexIdx]
                 \ . '>')
     let s:optLine.duplex = len(l:c)
     call add(l:c, '   Collate:  <' 
-                \ . g:prd_collate[g:prd_collateIdx]
+                \ . s:prd_collate[s:prd_collateIdx]
                 \ . '>')
     let s:optLine.collate = len(l:c)
     call add(l:c, '   JobSplit: <' 
-                \ . g:prd_splitPrintJob[g:prd_splitPrintJobIdx]
+                \ . s:prd_splitPrintJob[s:prd_splitPrintJobIdx]
                 \ . '>')
     let s:optLine.splitJob = len(l:c)
     call add(l:c, '')
     call add(l:c, '   Left:     <' 
-                \ . g:prd_leftMargin[g:prd_leftMarginIdx]
+                \ . s:prd_leftMargin[s:prd_leftMarginIdx]
                 \ . '>')
     let s:optLine.left = len(l:c)
     call add(l:c, '   Right:    <' 
-                \ . g:prd_rightMargin[g:prd_rightMarginIdx]
+                \ . s:prd_rightMargin[s:prd_rightMarginIdx]
                 \ . '>')
     let s:optLine.right = len(l:c)
     call add(l:c, '   Top:      <' 
-                \ . g:prd_topMargin[g:prd_topMarginIdx]
+                \ . s:prd_topMargin[s:prd_topMarginIdx]
                 \ . '>')
     let s:optLine.top = len(l:c)
     call add(l:c, '   Bottom:   <' 
-                \ . g:prd_bottomMargin[g:prd_bottomMarginIdx]
+                \ . s:prd_bottomMargin[s:prd_bottomMarginIdx]
                 \ . '>')
     let s:optLine.bottom = len(l:c)
     call add(l:c, '')
     call add(l:c, '   Dialog:   <' 
-                \ . g:prd_osPrintDialog[g:prd_osPrintDialogIdx]
+                \ . s:prd_osPrintDialog[s:prd_osPrintDialogIdx]
                 \ . '>')
     let s:optLine.osPrintDialog = len(l:c)
     
     " write content to buffer                                          {{{3
     let l:txt = join(l:c, "\n")
+    setlocal modifiable
     put! = l:txt
     setlocal nomodifiable                                            " }}}3
 
@@ -510,6 +294,363 @@ function s:SetupSyntax()
 
 endfunction
 
+" s:SetPrintOptionChoices()                                            {{{2
+"  intent: (re)set print options
+"  params: nil
+"  prints: nil
+"  return: n/a
+function! s:SetPrintOptionChoices()
+
+    " devices [default: standard]                                      {{{3
+    "   . always rescan in absence of user setting because new
+    "     print devices may have been enabled since last print
+    if exists('g:prd_printDevices')
+        let s:prd_printDevices = copy(g:prd_printDevices)
+    else
+        call s:SetPrintDeviceOptionChoices()
+    endif
+    if !exists('s:prd_printDeviceIdx')
+        if exists('g:prd_printDeviceIdx')
+            let s:prd_printDeviceIdx = g:prd_printDeviceIdx
+        else
+            let s:prd_printDeviceIdx = 0
+        endif
+    endif
+
+    " fonts [default: courier 8]                                       {{{3
+    if !exists('s:prd_fonts')
+        if exists('g:prd_fonts')
+            let s:prd_fonts = copy(g:prd_fonts)
+        else
+            let s:prd_fonts = ['courier:h6',  'courier:h8',
+                        \      'courier:h10', 'courier:h12',
+                        \      'courier:h14']
+        endif
+    endif
+    if !exists('s:prd_fontIdx')
+        if exists('g:prd_fontIdx')
+            let s:prd_fontIdx = g:prd_fontIdx
+        else
+            let s:prd_fontIdx = 1
+        endif
+    endif
+
+    " paper size [default: A4]                                         {{{3
+    if !exists('s:prd_paperSizes')
+        if exists('g:prd_paperSizes')
+            let s:prd_paperSizes = copy(g:prd_paperSizes)
+        else
+            let s:prd_paperSizes = ['A3', 'A4',    'A5',     'B4',
+                        \           'B5', 'legal', 'letter']
+        endif
+    endif
+    if !exists('s:prd_paperSizeIdx')
+        if exists('g:prd_paperSizeIdx')
+            let s:prd_paperSizeIdx = g:prd_paperSizeIdx
+        else
+            let s:prd_paperSizeIdx = 1
+        endif
+    endif
+
+    " orientation [default: portrait]                                  {{{3
+    if !exists('s:prd_portrait')
+        if exists('g:prd_portrait')
+            let s:prd_portrait = g:prd_portrait
+        else
+            let s:prd_portrait = ['yes', 'no']
+        endif
+    endif
+    if !exists('s:prd_portraitIdx')
+        if exists('g:prd_portraitIdx')
+            let s:prd_portraitIdx = g:prd_portraitIdx
+        else
+            let s:prd_portraitIdx = 0
+        endif
+    endif
+
+    " header size [default: 2 lines]                                   {{{3
+    if !exists('s:prd_headerSizes')
+        if exists('g:prd_headerSizes')
+            let s:prd_headerSizes = copy(g:prd_headerSizes)
+        else
+            let s:prd_headerSizes = [0, 1, 2, 3, 4, 5, 6]
+        endif
+    endif
+    if !exists('s:prd_headerSizeIdx')
+        if exists('g:prd_headerSizeIdx')
+            let s:prd_headerSizeIdx = g:prd_headerSizeIdx
+        else
+            let s:prd_headerSizeIdx = 2
+        endif
+    endif
+
+    " number lines [default: yes]                                      {{{3
+    if !exists('s:prd_numberLines')
+        if exists('g:prd_numberLines')
+            let s:prd_numberLines = copy(g:prd_numberLines)
+        else
+            let s:prd_numberLines = ['yes', 'no']
+        endif
+    endif
+    if !exists('s:prd_numberLinesIdx')
+        if exists('g:prd_numberLinesIdx')
+            let s:prd_numberLinesIdx = g:prd_numberLinesIdx
+        else
+            let s:prd_numberLinesIdx = 0
+        endif
+    endif
+
+    " syntax highlighting and colour scheme [default: vim default]     {{{3
+    if !exists('s:prd_syntaxSchemes')
+        if exists('g:prd_syntaxSchemes')
+            let s:prd_syntaxSchemes = copy(g:prd_syntaxSchemes)
+        else
+            let s:prd_syntaxSchemes = ['no', 'current', 'default']
+            for l:scheme in ['print_bw', 'zellner', 'solarized']
+                let l:path = 'colors/' . l:scheme . '.vim'
+                if !empty(globpath(&runtimepath, l:path, 1, 1))
+                    call add(s:prd_syntaxSchemes, l:scheme)
+                endif
+            endfor
+        endif
+    endif
+    if !exists('s:prd_syntaxSchemeIdx')
+        if exists('g:prd_syntaxSchemeIdx')
+            let s:prd_syntaxSchemeIdx = g:prd_syntaxSchemeIdx
+        else
+            let s:prd_syntaxSchemeIdx = 2
+        endif
+    endif
+
+    " wrap or truncate long lines [default: wrap]                      {{{3
+    if !exists('s:prd_wrapLines')
+        if exists('g:prd_wrapLines')
+            let s:prd_wrapLines = copy(g:prd_wrapLines)
+        else
+            let s:prd_wrapLines = ['yes', 'no']
+        endif
+    endif
+    if !exists('s:prd_wrapLinesIdx')
+        if exists('g:prd_wrapLinesIdx')
+            let s:prd_wrapLinesIdx = g:prd_wrapLinesIdx
+        else
+            let s:prd_wrapLinesIdx = 0
+        endif
+    endif
+
+    " duplex [default: on, bind on long edge]                          {{{3
+    if !exists('s:prd_duplex')
+        if exists('g:prd_duplex')
+            let s:prd_duplex = copy(g:prd_duplex)
+        else
+            let s:prd_duplex = ['off', 'long', 'short']
+        endif
+    endif
+    if !exists('s:prd_duplexIdx')
+        if exists('g:prd_duplexIdx')
+            let s:prd_duplexIdx = g:prd_duplexIdx
+        else
+            let s:prd_duplexIdx = 1
+        endif
+    endif
+
+    " collate [default: yes]                                           {{{3
+    if !exists('s:prd_collate')
+        if exists('g:prd_collate')
+            let s:prd_collate = copy(g:prd_collate)
+        else
+            let s:prd_collate = ['yes', 'no']
+        endif
+    endif
+    if !exists('s:prd_collateIdx')
+        if exists('g:prd_collateIdx')
+            let s:prd_collateIdx = g:prd_collateIdx
+        else
+            let s:prd_collateIdx = 0
+        endif
+    endif
+
+    " split copies into separate print jobs [default: no]              {{{3
+    if !exists('s:prd_splitPrintJob')
+        if exists('g:prd_splitPrintJob')
+            let s:prd_splitPrintJob = copy(g:prd_splitPrintJob)
+        else
+            let s:prd_splitPrintJob = ['yes', 'no']
+        endif
+    endif
+    if !exists('s:prd_splitPrintJobIdx')
+        if exists('g:prd_splitPrintJobIdx')
+            let s:prd_splitPrintJobIdx = g:prd_splitPrintJobIdx
+        else
+            let s:prd_splitPrintJobIdx = 1
+        endif
+    endif
+
+    " left margin [default: 15mm]                                      {{{3
+    if !exists('s:prd_leftMargin')
+        if exists('g:prd_leftMargin')
+            let s:prd_leftMargin = copy(g:prd_leftMargin)
+        else
+            let s:prd_leftMargin = ['5mm',  '10mm', '15mm',
+                        \           '20mm', '25mm']
+        endif
+    endif
+    if !exists('s:prd_leftMarginIdx')
+        if exists('g:prd_leftMarginIdx')
+            let s:prd_leftMarginIdx = g:prd_leftMarginIdx
+        else
+            let s:prd_leftMarginIdx = 2
+        endif
+    endif
+
+    " right margin [default: 15mm]                                     {{{3
+    if !exists('s:prd_rightMargin')
+        if exists('g:prd_rightMargin')
+            let s:prd_rightMargin = copy(g:prd_rightMargin)
+        else
+            let s:prd_rightMargin = ['5mm',  '10mm', '15mm',
+                        \            '20mm', '25mm']
+        endif
+    endif
+    if !exists('s:prd_rightMarginIdx')
+        if exists('g:prd_rightMarginIdx')
+            let s:prd_rightMarginIdx = g:prd_rightMarginIdx
+        else
+            let s:prd_rightMarginIdx = 2
+        endif
+    endif
+
+    " top margin [default: 10mm]                                       {{{3
+    if !exists('s:prd_topMargin')
+        if exists('g:prd_topMargin')
+            let s:prd_topMargin = copy(g:prd_topMargin)
+        else
+            let s:prd_topMargin = ['5mm',  '10mm', '15mm',
+                        \          '20mm', '25mm']
+        endif
+    endif
+    if !exists('s:prd_topMarginIdx')
+        if exists('g:prd_topMarginIdx')
+            let s:prd_topMarginIdx = g:prd_topMarginIdx
+        else
+            let s:prd_topMarginIdx = 1
+        endif
+    endif
+
+    " bottom margin [default: 10mm]                                    {{{3
+    if !exists('s:prd_bottomMargin')
+        if exists('g:prd_bottomMargin')
+            let s:prd_bottomMargin = copy(g:prd_bottomMargin)
+        else
+            let s:prd_bottomMargin = ['5mm',  '10mm', '15mm',
+                        \             '20mm', '25mm']
+        endif
+    endif
+    if !exists('s:prd_bottomMarginIdx')
+        if exists('g:prd_bottomMarginIdx')
+            let s:prd_bottomMarginIdx = g:prd_bottomMarginIdx
+        else
+            let s:prd_bottomMarginIdx = 1
+        endif
+    endif
+
+    " show Windows print dialog before printing [default: no]          {{{3
+    if !exists('s:prd_osPrintDialog')
+        if exists('g:prd_osPrintDialog')
+            let s:prd_osPrintDialog = copy(g:prd_osPrintDialog)
+        else
+            let s:prd_osPrintDialog = ['yes', 'no']
+        endif
+    endif
+    if !exists('s:prd_osPrintDialogIdx')
+        if exists('g:prd_osPrintDialogIdx')
+            let s:prd_osPrintDialogIdx = g:prd_osPrintDialogIdx
+        else
+            let s:prd_osPrintDialogIdx = 1
+        endif
+    endif
+
+    " printheader                                                      {{{3
+    if !exists('s:prd_printheader')
+        if exists('g:prd_printheader')
+            let s:prd_printheader = g:prd_printheader
+        else
+            let s:prd_printheader = &printheader
+        endif
+    endif                                                            " }}}3
+
+endfunction
+" s:SetPrintDeviceOptionChoices()                                      {{{2
+"  intent: scan for print devices and add them to standard options
+"  params: nil
+"  prints: nil
+"  return: n/a
+function! s:SetPrintDeviceOptionChoices()
+
+    " add default print device                                         {{{3
+    let s:prd_printDevices = ['standard']
+
+    " check for utils needed to extract print devices                  {{{3
+    let l:missing_exes = []
+    for l:exe in ['lpstat', 'grep', 'awk']
+        if !executable(l:exe)
+            call add(l:missing_exes, l:exe)
+        endif
+    endfor
+
+    " exit if missing required utils                                   {{{3
+    " - display error message once only per session
+    if !empty(l:missing_exes)
+        if !exists('s:displayedMissingExeMessage')
+            let s:displayedMissingExeMessage = 1
+            echo "Can't retrieve print device listing -"
+            echo '  missing ' .join(l:missing_exes, ', ')
+        endif
+        return
+    endif
+
+    " get print devices                                                {{{3
+    let l:cmd = "lpstat -p | grep '^printer' | grep 'enabled' "
+                \ . "| awk '{print $2}'"
+    let l:print_devices = systemlist(l:cmd)
+    if v:shell_error
+        echoerr 'Unable to obtain print device listing'
+        if len(l:print_devices)
+            echoerr 'Shell feedback:'
+            for l:line in l:print_devices
+                echoerr '  ' . l:line
+            endfor
+        endif
+    endif
+
+    " add new print devices                                            {{{3
+    call extend(s:prd_printDevices, l:print_devices)
+
+    " get default device                                               {{{3
+    let l:cmd = "lpstat -d | awk '{print $NF}'"
+    let l:default_device = systemlist(l:cmd)
+    if v:shell_error || len(l:default_device)    != 1
+                \    || len(l:default_device[0]) == 0
+        echoerr 'Unable to obtain default print device'
+        if len(l:default_device)
+            echoerr 'Shell feedback:'
+            for l:line in l:default_device
+                echoerr '  ' . l:line
+            endfor
+        endif
+        return
+    endif
+    
+    " set default device                                               {{{3
+    let l:default_position = index(s:prd_printDevices,
+                \                  l:default_device[0])
+    if l:default_position != -1
+        let s:prd_printDeviceIdx = l:default_position
+    endif                                                            " }}}3
+
+endfunction
+
+
 " s:SetLocalKeyMappings()                                              {{{2
 "  intent: set local, temporary key-mappings for this buffer only          
 "  params: nil
@@ -533,7 +674,7 @@ endfunction
 "  note:   if no user setting, set to 'standard'
 function s:SetPrintdevice()
 
-    let l:element = g:prd_printDevices[g:prd_printDeviceIdx]
+    let l:element = s:prd_printDevices[s:prd_printDeviceIdx]
     if tolower(l:element) ==# 'standard'
         let &printdevice = ''
     else
@@ -552,39 +693,39 @@ function s:SetPrintoptions()
     let l:opts = ''
 
     " margins                                                          {{{3
-    let l:opts .= ',left:'   . g:prd_leftMargin[g:prd_leftMarginIdx]
-    let l:opts .= ',right:'  . g:prd_rightMargin[g:prd_rightMarginIdx]
-    let l:opts .= ',top:'    . g:prd_topMargin[g:prd_topMarginIdx]
-    let l:opts .= ',bottom:' . g:prd_bottomMargin[g:prd_bottomMarginIdx]
+    let l:opts .= ',left:'   . s:prd_leftMargin[s:prd_leftMarginIdx]
+    let l:opts .= ',right:'  . s:prd_rightMargin[s:prd_rightMarginIdx]
+    let l:opts .= ',top:'    . s:prd_topMargin[s:prd_topMarginIdx]
+    let l:opts .= ',bottom:' . s:prd_bottomMargin[s:prd_bottomMarginIdx]
     
     " header                                                           {{{3
-    let l:opts .= ',header:' . g:prd_headerSizes[g:prd_headerSizeIdx]
+    let l:opts .= ',header:' . s:prd_headerSizes[s:prd_headerSizeIdx]
     
     " duplex                                                           {{{3
-    let l:opts .= ',duplex:' . g:prd_duplex[g:prd_duplexIdx]
+    let l:opts .= ',duplex:' . s:prd_duplex[s:prd_duplexIdx]
     
     " paper size                                                       {{{3
-    let l:opts .= ',paper:'  . g:prd_paperSizes[g:prd_paperSizeIdx]
+    let l:opts .= ',paper:'  . s:prd_paperSizes[s:prd_paperSizeIdx]
     
     " line numbering                                                   {{{3
     let l:opts .= ',number:' . strpart(
-                \ g:prd_numberLines[g:prd_numberLinesIdx], 0, 1)
+                \ s:prd_numberLines[s:prd_numberLinesIdx], 0, 1)
     
     " line wrapping                                                    {{{3
     let l:opts .= ',wrap:'   . strpart(
-                \ g:prd_wrapLines[g:prd_wrapLineIdx], 0, 1)
+                \ s:prd_wrapLines[s:prd_wrapLinesIdx], 0, 1)
     
     " collate                                                          {{{3
     let l:opts .= ',collate:'  . strpart(
-                \ g:prd_collate[g:prd_collateIdx], 0, 1)
+                \ s:prd_collate[s:prd_collateIdx], 0, 1)
     
     " split copies into individual print jobs                          {{{3
     let l:opts .= ',jobSplit:' . strpart(
-                \ g:prd_splitPrintJob[g:prd_splitPrintJobIdx], 0, 1)
+                \ s:prd_splitPrintJob[s:prd_splitPrintJobIdx], 0, 1)
     
     " orientation                                                      {{{3
     let l:opts .= ',portrait:' . strpart(
-                \ g:prd_portrait[g:prd_portraitIdx], 0, 1)
+                \ s:prd_portrait[s:prd_portraitIdx], 0, 1)
     
     " syntax highlighting                                              {{{3
     if has('syntax')
@@ -608,7 +749,7 @@ endfunction
 "  return: n/a
 function s:SetPrintfont()
 
-    let &printfont = g:prd_fonts[g:prd_fontIdx]
+    let &printfont = s:prd_fonts[s:prd_fontIdx]
 
 endfunction
 
@@ -619,7 +760,7 @@ endfunction
 "  return: n/a
 function s:SetPrintheader()
 
-    let &printheader = g:prd_printheader
+    let &printheader = s:prd_printheader
 
 endfunction
 
@@ -701,7 +842,8 @@ endfunction
 
 " <SID>PRD_ToggleParameter(step)                                       {{{2
 "  intent: toggle parameter under cursor to next or previous value
-"  params: step - direction to increment (1=next, -1=previous)
+"  params: step - direction to increment
+"                 [integer, 1 = next, -1 = previous]
 "  insert: new option value
 "  return: n/a
 function <SID>PRD_ToggleParameter(step)
@@ -713,63 +855,63 @@ function <SID>PRD_ToggleParameter(step)
     " then extract new option value:
     " - print device                                                   {{{3
     if     l:lineNr == s:optLine.printDevice
-        let g:prd_printDeviceIdx = g:prd_printDeviceIdx + a:step 
-        if g:prd_printDeviceIdx == len(g:prd_printDevices)
-            let g:prd_printDeviceIdx = 0
-        elseif g:prd_printDeviceIdx < 0
-            let g:prd_printDeviceIdx = len(g:prd_printDevices) - 1
+        let s:prd_printDeviceIdx = s:prd_printDeviceIdx + a:step 
+        if s:prd_printDeviceIdx == len(s:prd_printDevices)
+            let s:prd_printDeviceIdx = 0
+        elseif s:prd_printDeviceIdx < 0
+            let s:prd_printDeviceIdx = len(s:prd_printDevices) - 1
         endif
-        let l:element = g:prd_printDevices[g:prd_printDeviceIdx]
+        let l:element = s:prd_printDevices[s:prd_printDeviceIdx]
 
     " - font                                                           {{{3
     elseif l:lineNr == s:optLine.font
-        let g:prd_fontIdx = g:prd_fontIdx + a:step 
-        if g:prd_fontIdx == len(g:prd_fonts)
-            let g:prd_fontIdx = 0
-        elseif g:prd_fontIdx < 0
-            let g:prd_fontIdx = len(g:prd_fonts) - 1
+        let s:prd_fontIdx = s:prd_fontIdx + a:step 
+        if s:prd_fontIdx == len(s:prd_fonts)
+            let s:prd_fontIdx = 0
+        elseif s:prd_fontIdx < 0
+            let s:prd_fontIdx = len(s:prd_fonts) - 1
         endif
-        let l:element = g:prd_fonts[g:prd_fontIdx]
+        let l:element = s:prd_fonts[s:prd_fontIdx]
 
     " - paper size                                                     {{{3
     elseif l:lineNr == s:optLine.paper
-        let g:prd_paperSizeIdx = g:prd_paperSizeIdx + a:step 
-        if g:prd_paperSizeIdx == len(g:prd_paperSizes)
-            let g:prd_paperSizeIdx = 0
-        elseif g:prd_paperSizeIdx < 0
-            let g:prd_paperSizeIdx = len(g:prd_paperSizes) - 1
+        let s:prd_paperSizeIdx = s:prd_paperSizeIdx + a:step 
+        if s:prd_paperSizeIdx == len(s:prd_paperSizes)
+            let s:prd_paperSizeIdx = 0
+        elseif s:prd_paperSizeIdx < 0
+            let s:prd_paperSizeIdx = len(s:prd_paperSizes) - 1
         endif
-        let l:element = g:prd_paperSizes[g:prd_paperSizeIdx]
+        let l:element = s:prd_paperSizes[s:prd_paperSizeIdx]
     
     " - orientation                                                    {{{3
     elseif l:lineNr == s:optLine.portrait
-        let g:prd_portraitIdx = g:prd_portraitIdx + a:step 
-        if g:prd_portraitIdx == len(g:prd_portrait)
-            let g:prd_portraitIdx = 0
-        elseif g:prd_portraitIdx < 0
-            let g:prd_portraitIdx = len(g:prd_portrait) - 1
+        let s:prd_portraitIdx = s:prd_portraitIdx + a:step 
+        if s:prd_portraitIdx == len(s:prd_portrait)
+            let s:prd_portraitIdx = 0
+        elseif s:prd_portraitIdx < 0
+            let s:prd_portraitIdx = len(s:prd_portrait) - 1
         endif
-        let l:element = g:prd_portrait[g:prd_portraitIdx]
+        let l:element = s:prd_portrait[s:prd_portraitIdx]
     
     " - header size                                                    {{{3
     elseif l:lineNr == s:optLine.header
-        let g:prd_headerSizeIdx = g:prd_headerSizeIdx + a:step 
-        if g:prd_headerSizeIdx == len(g:prd_headerSizes)
-            let g:prd_headerSizeIdx = 0
-        elseif g:prd_headerSizeIdx < 0
-            let g:prd_headerSizeIdx = len(g:prd_headerSizes) - 1
+        let s:prd_headerSizeIdx = s:prd_headerSizeIdx + a:step 
+        if s:prd_headerSizeIdx == len(s:prd_headerSizes)
+            let s:prd_headerSizeIdx = 0
+        elseif s:prd_headerSizeIdx < 0
+            let s:prd_headerSizeIdx = len(s:prd_headerSizes) - 1
         endif
-        let l:element = g:prd_headerSizes[g:prd_headerSizeIdx]
+        let l:element = s:prd_headerSizes[s:prd_headerSizeIdx]
     
     " - line numbering                                                 {{{3
     elseif l:lineNr == s:optLine.number
-        let g:prd_numberLinesIdx = g:prd_numberLinesIdx + a:step 
-        if g:prd_numberLinesIdx == len(g:prd_numberLines)
-            let g:prd_numberLinesIdx = 0
-        elseif g:prd_numberLinesIdx < 0
-            let g:prd_numberLinesIdx = len(g:prd_numberLines) - 1
+        let s:prd_numberLinesIdx = s:prd_numberLinesIdx + a:step 
+        if s:prd_numberLinesIdx == len(s:prd_numberLines)
+            let s:prd_numberLinesIdx = 0
+        elseif s:prd_numberLinesIdx < 0
+            let s:prd_numberLinesIdx = len(s:prd_numberLines) - 1
         endif
-        let l:element = g:prd_numberLines[g:prd_numberLinesIdx]
+        let l:element = s:prd_numberLines[s:prd_numberLinesIdx]
     
     " - syntax highlighting                                            {{{3
     elseif l:lineNr == s:optLine.syntax
@@ -783,87 +925,87 @@ function <SID>PRD_ToggleParameter(step)
     
     " - line wrapping                                                  {{{3
     elseif l:lineNr == s:optLine.wrap
-        let g:prd_wrapLineIdx = g:prd_wrapLineIdx + a:step 
-        if g:prd_wrapLineIdx == len(g:prd_wrapLines)
-            let g:prd_wrapLineIdx = 0
-        elseif g:prd_wrapLineIdx < 0
-            let g:prd_wrapLineIdx = len(g:prd_wrapLines) - 1
+        let s:prd_wrapLinesIdx = s:prd_wrapLinesIdx + a:step 
+        if s:prd_wrapLinesIdx == len(s:prd_wrapLines)
+            let s:prd_wrapLinesIdx = 0
+        elseif s:prd_wrapLinesIdx < 0
+            let s:prd_wrapLinesIdx = len(s:prd_wrapLines) - 1
         endif
-        let l:element = g:prd_wrapLines[g:prd_wrapLineIdx]
+        let l:element = s:prd_wrapLines[s:prd_wrapLinesIdx]
     
     " - duplex                                                         {{{3
     elseif l:lineNr == s:optLine.duplex
-        let g:prd_duplexIdx = g:prd_duplexIdx + a:step 
-        if g:prd_duplexIdx == len(g:prd_duplex)
-            let g:prd_duplexIdx = 0
-        elseif g:prd_duplexIdx < 0
-            let g:prd_duplexIdx = len(g:prd_duplex) - 1
+        let s:prd_duplexIdx = s:prd_duplexIdx + a:step 
+        if s:prd_duplexIdx == len(s:prd_duplex)
+            let s:prd_duplexIdx = 0
+        elseif s:prd_duplexIdx < 0
+            let s:prd_duplexIdx = len(s:prd_duplex) - 1
         endif
-        let l:element = g:prd_duplex[g:prd_duplexIdx]
+        let l:element = s:prd_duplex[s:prd_duplexIdx]
     
     " - collate                                                        {{{3
     elseif l:lineNr == s:optLine.collate
-        let g:prd_collateIdx = g:prd_collateIdx + a:step 
-        if g:prd_collateIdx == len(g:prd_collate)
-            let g:prd_collateIdx = 0
-        elseif g:prd_collateIdx < 0
-            let g:prd_collateIdx = len(g:prd_collate) - 1
+        let s:prd_collateIdx = s:prd_collateIdx + a:step 
+        if s:prd_collateIdx == len(s:prd_collate)
+            let s:prd_collateIdx = 0
+        elseif s:prd_collateIdx < 0
+            let s:prd_collateIdx = len(s:prd_collate) - 1
         endif
-        let l:element = g:prd_collate[g:prd_collateIdx]
+        let l:element = s:prd_collate[s:prd_collateIdx]
     
     " - split copies into separate print jobs                          {{{3
     elseif l:lineNr == s:optLine.splitJob
-        let g:prd_splitPrintJobIdx = g:prd_splitPrintJobIdx + a:step 
-        if g:prd_splitPrintJobIdx == len(g:prd_splitPrintJob)
-            let g:prd_splitPrintJobIdx = 0
-        elseif g:prd_splitPrintJobIdx < 0
-            let g:prd_splitPrintJobIdx = len(g:prd_splitPrintJob) - 1
+        let s:prd_splitPrintJobIdx = s:prd_splitPrintJobIdx + a:step 
+        if s:prd_splitPrintJobIdx == len(s:prd_splitPrintJob)
+            let s:prd_splitPrintJobIdx = 0
+        elseif s:prd_splitPrintJobIdx < 0
+            let s:prd_splitPrintJobIdx = len(s:prd_splitPrintJob) - 1
         endif
-        let l:element = g:prd_splitPrintJob[g:prd_splitPrintJobIdx]
+        let l:element = s:prd_splitPrintJob[s:prd_splitPrintJobIdx]
     
     " - margins                                                        {{{3
     elseif l:lineNr == s:optLine.left
-        let g:prd_leftMarginIdx = g:prd_leftMarginIdx + a:step 
-        if g:prd_leftMarginIdx == len(g:prd_leftMargin)
-            let g:prd_leftMarginIdx = 0
-        elseif g:prd_leftMarginIdx < 0
-            let g:prd_leftMarginIdx = len(g:prd_leftMargin) - 1
+        let s:prd_leftMarginIdx = s:prd_leftMarginIdx + a:step 
+        if s:prd_leftMarginIdx == len(s:prd_leftMargin)
+            let s:prd_leftMarginIdx = 0
+        elseif s:prd_leftMarginIdx < 0
+            let s:prd_leftMarginIdx = len(s:prd_leftMargin) - 1
         endif
-        let l:element = g:prd_leftMargin[g:prd_leftMarginIdx]
+        let l:element = s:prd_leftMargin[s:prd_leftMarginIdx]
     elseif l:lineNr == s:optLine.right
-        let g:prd_rightMarginIdx = g:prd_rightMarginIdx + a:step 
-        if g:prd_rightMarginIdx == len(g:prd_rightMargin)
-            let g:prd_rightMarginIdx = 0
-        elseif g:prd_rightMarginIdx < 0
-            let g:prd_rightMarginIdx = len(g:prd_rightMargin) - 1
+        let s:prd_rightMarginIdx = s:prd_rightMarginIdx + a:step 
+        if s:prd_rightMarginIdx == len(s:prd_rightMargin)
+            let s:prd_rightMarginIdx = 0
+        elseif s:prd_rightMarginIdx < 0
+            let s:prd_rightMarginIdx = len(s:prd_rightMargin) - 1
         endif
-        let l:element = g:prd_rightMargin[g:prd_rightMarginIdx]
+        let l:element = s:prd_rightMargin[s:prd_rightMarginIdx]
     elseif l:lineNr == s:optLine.top
-        let g:prd_topMarginIdx = g:prd_topMarginIdx + a:step 
-        if g:prd_topMarginIdx == len(g:prd_topMargin)
-            let g:prd_topMarginIdx = 0
-        elseif g:prd_topMarginIdx < 0
-            let g:prd_topMarginIdx = len(g:prd_topMargin) - 1
+        let s:prd_topMarginIdx = s:prd_topMarginIdx + a:step 
+        if s:prd_topMarginIdx == len(s:prd_topMargin)
+            let s:prd_topMarginIdx = 0
+        elseif s:prd_topMarginIdx < 0
+            let s:prd_topMarginIdx = len(s:prd_topMargin) - 1
         endif
-        let l:element = g:prd_topMargin[g:prd_topMarginIdx]
+        let l:element = s:prd_topMargin[s:prd_topMarginIdx]
     elseif l:lineNr == s:optLine.bottom
-        let g:prd_bottomMarginIdx = g:prd_bottomMarginIdx + a:step 
-        if g:prd_bottomMarginIdx == len(g:prd_bottomMargin)
-            let g:prd_bottomMarginIdx = 0
-        elseif g:prd_bottomMarginIdx < 0
-            let g:prd_bottomMarginIdx = len(g:prd_bottomMargin) - 1
+        let s:prd_bottomMarginIdx = s:prd_bottomMarginIdx + a:step 
+        if s:prd_bottomMarginIdx == len(s:prd_bottomMargin)
+            let s:prd_bottomMarginIdx = 0
+        elseif s:prd_bottomMarginIdx < 0
+            let s:prd_bottomMarginIdx = len(s:prd_bottomMargin) - 1
         endif
-        let l:element = g:prd_bottomMargin[g:prd_bottomMarginIdx]
+        let l:element = s:prd_bottomMargin[s:prd_bottomMarginIdx]
     
     " - display windows print dialog                                   {{{3
     elseif l:lineNr == s:optLine.osPrintDialog
-        let g:prd_osPrintDialogIdx = g:prd_osPrintDialogIdx + a:step 
-        if g:prd_osPrintDialogIdx == len(g:prd_osPrintDialog)
-            let g:prd_osPrintDialogIdx = 0
-        elseif g:prd_osPrintDialogIdx < 0
-            let g:prd_osPrintDialogIdx = len(g:prd_osPrintDialog) - 1
+        let s:prd_osPrintDialogIdx = s:prd_osPrintDialogIdx + a:step 
+        if s:prd_osPrintDialogIdx == len(s:prd_osPrintDialog)
+            let s:prd_osPrintDialogIdx = 0
+        elseif s:prd_osPrintDialogIdx < 0
+            let s:prd_osPrintDialogIdx = len(s:prd_osPrintDialog) - 1
         endif
-        let l:element = g:prd_osPrintDialog[g:prd_osPrintDialogIdx]
+        let l:element = s:prd_osPrintDialog[s:prd_osPrintDialogIdx]
     
     " - handle case where cursor not on parameter                      {{{3
     else
@@ -961,7 +1103,7 @@ function <SID>PRD_StartPrinting()
     " construct print command                                          {{{3
     let l:cmd = s:range.start . ',' . s:range.end . 'hardcopy'
     let l:show_win_dialog = tolower(
-                \ g:prd_osPrintDialog[g:prd_osPrintDialogIdx])
+                \ s:prd_osPrintDialog[s:prd_osPrintDialogIdx])
     if l:show_win_dialog ==# 'no'
         let l:cmd .= '!'  
     endif
@@ -984,5 +1126,4 @@ function <SID>PRD_StartPrinting()
 
 endfunction
                                                                      " }}}1
-
 " vim: fdm=marker :
