@@ -84,7 +84,7 @@ endif
 
 " - syntax highlighting and colour scheme [default: vim default]       {{{3
 if !exists('g:prd_syntaxSchemes')
-    let g:prd_syntaxSchemes   = ['no', 'current', 'default']
+    let g:prd_syntaxSchemes = ['no', 'current', 'default']
     for l:scheme in ['print_bw', 'zellner', 'solarized']
         let l:path = 'colors/' . l:scheme . '.vim'
         if globpath(&runtimepath, l:path, 1, 1)
