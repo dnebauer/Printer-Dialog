@@ -83,7 +83,8 @@ if !exists('g:prd_numberLinesIdx')
 endif
 
 " - syntax highlighting and colour scheme [default: vim default]       {{{3
-if !exists('g:prd_syntaxSchemes')
+" s:SetSyntaxSchemes()                                                 {{{4
+function! s:SetSyntaxSchemes()
     let g:prd_syntaxSchemes = ['no', 'current', 'default']
     for l:scheme in ['print_bw', 'zellner', 'solarized']
         let l:path = 'colors/' . l:scheme . '.vim'
@@ -91,6 +92,9 @@ if !exists('g:prd_syntaxSchemes')
             call add(g:prd_syntaxSchemes, l:scheme)
         endif
     endfor
+endfunction                                                          " }}}4
+if !exists('g:prd_syntaxSchemes')
+    call s:SetSyntaxSchemes()
 endif
 if !exists('g:prd_syntaxSchemeIdx')
     let g:prd_syntaxSchemeIdx = 2
