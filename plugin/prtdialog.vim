@@ -33,8 +33,79 @@ nmap <silent> <unique> <script> <Plug>PRD_PrinterDialogNormal      :call <SID>PR
 " default properties                                                   {{{2
 
 " - devices [default: standard]                                        {{{3
-if !exists('g:prd_printDevices')
+" s:SetPrintDevices()                                                  {{{4
+"  intent: load available printer devices
+"  params: nil
+"  insert: nil
+"  return: n/a
+function! s:SetPrintDevices()
+
+    " add default print device                                         {{{5
     let g:prd_printDevices   = ['standard']
+    let g:prd_printDeviceIdx = 0
+
+    " check for all utils needed to extract print devices              {{{5
+    let l:exes = ['lstat', 'grep', 'awk']
+    let l:missing_exes = []
+    for l:exe in [l:exes]
+        if !executable(l:exe)
+            call add(l:missing_exes, l:exe)
+        endif
+    endfor
+
+    " exit if missing required utils                                   {{{5
+    " - display error message once only per session
+    if !empty(l:missing_exes)
+        if !exists('s:displayedMissingExeMessage')
+            let s:displayedMissingExeMessage = 1
+            echo "Can't retrieve print device listing -"
+            echo '  missing' .join(l:missing_exes, ', ')
+        endif
+        return
+    endif
+
+    " get print devices                                                {{{5
+    let l:cmd = "lpstat -p | grep '^printer' | grep 'enabled' "
+                \ "| awk '{print $2}'"
+    let l:print_devices = systemlist(l:cmd)
+    if v:shell_error
+        echoerr 'Unable to obtain print device listing'
+        if len(l:print_devices)
+            echoerr 'Shell feedback:'
+            for l:line in l:print_devices
+                echoerr '  ' . l:line
+            endfor
+        endif
+    endif
+
+    " add new print devices                                            {{{5
+    call extend(g:prd_printDevices, l:print_devices)
+
+    " get default device                                               {{{5
+    let l:cmd = "lpstat -d | awk '{print $NF}'"
+    let l:default_device = systemlist(l:cmd)
+    if v:shell_error || len(l:default_device)    != 1
+                \    || len(l:default_device[0]) == 0
+        echoerr 'Unable to obtain default print device'
+        if len(l:default_device)
+            echoerr 'Shell feedback:'
+            for l:line in l:default_device
+                echoerr '  ' . l:line
+            endfor
+        endif
+        return
+    endif
+    
+    " set default device                                               {{{5
+    let l:default_position = index(g:prd_printDevices,
+                \                  l:default_device[0])
+    if l:default_position != -1
+        let g:prd_printDeviceIdx = l:default_position
+    endif                                                            " }}}5
+
+endfunction                                                          " }}}4
+if !exists('g:prd_printDevices')
+    call s:SetPrintDevices()
 endif
 if !exists('g:prd_printDeviceIdx')
     let g:prd_printDeviceIdx = 0
@@ -191,7 +262,7 @@ let s:scriptName = 'PrtDialog'
 let s:flagColorschemeDone = 0
 
 " default 'printexpr' (obtained from |:help pexpr-option|)             {{{2
-let s:default_printexpr = "system('lpr' . (&printdevice == '' ? '' "
+let s:defaultPrintexpr = "system('lpr' . (&printdevice == '' ? '' "
             \ . ": ' -P' . &printdevice) . ' ' . v:fname_in) . "
             \ . 'delete(v:fname_in) + v:shell_error'
 
@@ -899,7 +970,7 @@ function <SID>PRD_StartPrinting()
 
     " work with plugins that alter 'printexpr'
     let l:printexpr_backup = &printexpr
-    let &printexpr = s:default_printexpr
+    let &printexpr = s:defaultPrintexpr
 
     " execute print command                                            {{{3
     execute l:cmd
