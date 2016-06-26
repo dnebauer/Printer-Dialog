@@ -585,6 +585,12 @@ endfunction
 "  return: n/a
 function! s:SetPrintDeviceOptionChoices()
 
+    " get previously selected printer                                  {{{3
+    if !empty(s:prd_printDevices) && exists('s:prd_printDeviceIdx')
+        let s:previousPrintDevice =
+                    \ s:prd_printDevices[s:prd_printDeviceIdx]
+    endif
+
     " add default print device                                         {{{3
     let s:prd_printDevices = ['standard']
 
@@ -640,10 +646,19 @@ function! s:SetPrintDeviceOptionChoices()
     endif
     
     " set default device                                               {{{3
+    " - use previously selected printer if available,
+    "   otherwise use the default system printer
     let l:default_position = index(s:prd_printDevices,
                 \                  l:default_device[0])
     if l:default_position != -1
         let s:prd_printDeviceIdx = l:default_position
+    endif
+    if exists('s:previousPrintDevice')
+        let l:default_position = index(s:prd_printDevices,
+                    \                  s:previousPrintDevice)
+        if l:default_position != -1
+            let s:prd_printDeviceIdx = l:default_position
+        endif
     endif                                                            " }}}3
 
 endfunction
