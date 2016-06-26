@@ -27,8 +27,8 @@ endif
 if !hasmapto('<Plug>PRD_PrinterDialogNormal')
     nmap <silent> <unique> <Leader>pd <Plug>PRD_PrinterDialogNormal
 endif
-vmap <silent> <unique> <script> <Plug>PRD_PrinterDialogVisual <ESC>:call <SID>PRD_StartPrinterDialog(0)<CR>
-nmap <silent> <unique> <script> <Plug>PRD_PrinterDialogNormal      :call <SID>PRD_StartPrinterDialog(1)<CR>
+vmap <silent> <unique> <script> <Plug>PRD_PrinterDialogVisual <ESC>:call <SID>PRD_StartPrinterDialog(1)<CR>
+nmap <silent> <unique> <script> <Plug>PRD_PrinterDialogNormal      :call <SID>PRD_StartPrinterDialog(0)<CR>
 
 
 " INITIALISATION:                                                      {{{1
