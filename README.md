@@ -12,14 +12,12 @@ Installation
 
 Install using your favourite package manager.
 
-If you prefer to install vim plugins from git repositories manually, then you know enough and don't need any further help.
+If you prefer to install vim plugins from git repositories manually, then you don't need any additional help.
 
 Print dialog
 ------------
 
-The plugin provides a dialog to change many printer settings before starting to print.
-
-The print dialog is opened with `<Leader>pd`. In the dialog you can alter print settings and start printing or cancel the dialog.
+The plugin provides a print dialog that is opened with `<Leader>pd`. In the dialog you can alter print settings and start printing or cancel the dialog.
 
 The following settings can be changed:
 
@@ -38,6 +36,11 @@ The following settings can be changed:
 * whether to display the operating system print dialog (MS Windows only)
 
 Help is available in the print dialog for each setting.
+
+Customisation
+-------------
+
+For each setting it is possible for a user to specify custom values and which value is the default. This is done by setting global variables, and can be done conveniently in your `.vimrc` file. Further details can be obtained after installation with |:help prtdialog-parameters|.
 
 Changes from original plugin
 ----------------------------
