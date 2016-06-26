@@ -165,7 +165,7 @@ function s:UpdateDialog()
     call s:SetupSyntax()
 
     " set print option choices                                         {{{3
-    set s:SetPrintOptionChoices()
+    call s:SetPrintOptionChoices()
 
     " set column of parameter                                          {{{3
     let s:colPara = 14
