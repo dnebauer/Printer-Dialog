@@ -62,8 +62,3 @@ The original plugin did not check availability of preset colorschemes before sel
 ### Enhancements
 
 Each time the print dialog is invoked the script scans for enabled print devices and adds them to the printer list. If the print dialog is invoked multiple times in a single editing session, it will remember the previously selected printer and, if still available, will preselect it.
-
-License
--------
-
-This plugin is made available under the same license as vim. See |:help license| for further details.
